@@ -1,3 +1,8 @@
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import asyncHandler from "express-async-handler";
+
 import User from "../models/userModel.js";
 
 export const createUser = async (req , res) => {
@@ -16,7 +21,7 @@ export const createUser = async (req , res) => {
 
 }
 
-export const getUser = async (req , res) => {
+export const updateUser = async (req , res) => {
 
     const { id: _id } = req.params;
 
@@ -33,5 +38,11 @@ export const getUser = async (req , res) => {
         console.log(error);
 
     }
+
+}
+
+export const getUser = async (req , res) => {
+
+    
 
 }
