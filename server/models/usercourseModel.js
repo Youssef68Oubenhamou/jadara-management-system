@@ -15,4 +15,5 @@ const usercourseSchema = new Schema({
    
 });
 
-export const Usercourse = mongoose.model('Usercourse', usercourseSchema);
+const Usercourse = mongoose.model('Usercourse', usercourseSchema);
+export default Usercourse;
