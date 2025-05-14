@@ -2,7 +2,7 @@ import express from "express";
 import {getUsers,users, createUser, updateUser , deleteUser} from "../controllers/userController.js"
 import userProfile from "../controllers/userController.js"
 
-const router = express.Router();
+export const router = express.Router();
 
 // registre route with registre validation
 router.post("/register", registerValidation,register);
@@ -22,5 +22,3 @@ router.get("/users", verifyToken,users);
 
 
 
-module.exports = router;
-middlewares
