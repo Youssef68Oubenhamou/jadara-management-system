@@ -202,6 +202,8 @@ export const users = asyncHandler( async(req , res) => {
 
 })
 
+console.log("hello world");
+
 export const updateUser = async (req , res) => {
 
     const { id: _id } = req.params;
