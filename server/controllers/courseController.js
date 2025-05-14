@@ -2,26 +2,15 @@ import Course from ("../models/courseModel")
 
 
 // Get all courses
-// const getCourses = async (req, res) => {
-//   try {
-//     const courses = await Course.find();
-//     res.status(200).json(courses);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error fetching courses' });
-//   }
-// };
-
-// Get course by ID
-export const getCourseById = async (req, res) => {
-  const { id:_id } = req.params;
+export const getCourses = async (req, res) => {
   try {
-    const course = await Course.findById(_id);
-    if (!course) return res.status(404).json({ message: 'Not found' });
-    res.status(200).json(course);
+    const courses = await Course.find();
+    res.status(200).json(courses);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching course' });
+    res.status(500).json({ message: 'Error fetching courses' });
   }
 };
+
 
 // Create course
 export const createCourse = async (req, res) => {

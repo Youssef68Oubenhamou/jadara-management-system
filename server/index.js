@@ -41,6 +41,9 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import userRoutes from "./routes/user.js"
+import courseRoutes from "./routes/courses.js"
+
 
 dotenv.config(); // Load .env variables first
 
@@ -54,13 +57,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 // Routes
-app.get("/", (req, res) => {
-  res.send("Hello Sparadra!");
-});
-
-app.get("/register", (req, res) => {
-  res.send("Hello again");
-});
+app.use('/',userRoutes);
+app.use('/course',courseRoutes);
 
 // Database connection function
 mongoose.connect(db)
