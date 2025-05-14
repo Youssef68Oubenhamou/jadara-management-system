@@ -25,7 +25,7 @@ export const register = asyncHandler(async (req , res) => {
 
                         username: username,
                         email: email,
-                        password: password,
+                        password: hash,
                         group: group,
 
                     })
@@ -35,7 +35,8 @@ export const register = asyncHandler(async (req , res) => {
 
                             return res.status(201).json({
 
-                                message: "User successfuly created !"
+                                message: "User successfuly created !",
+                                result: response
 
                             })
 
@@ -190,9 +191,9 @@ export const users = asyncHandler( async(req , res) => {
 
     } catch (error) {
 
-        res.status(404).json({
+        res.status(401).json({
 
-            message: "Users not found !",
+            message: error.message,
             success: false
 
         })
@@ -218,11 +219,5 @@ export const updateUser = async (req , res) => {
         console.log(error);
 
     }
-
-}
-
-export const getUser = async (req , res) => {
-
-    
 
 }
