@@ -44,6 +44,7 @@ import mongoose from "mongoose";
 
 dotenv.config(); // Load .env variables first
 
+
 const app = express();
 const port = process.env.PORT || 5000; // Fallback in case PORT is not set
 const db = process.env.MONGODB_URI;
@@ -76,3 +77,4 @@ mongoose.connect(db)
         console.log(err.message);
 
     });
+
