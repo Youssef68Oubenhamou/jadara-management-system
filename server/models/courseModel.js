@@ -1,29 +1,30 @@
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
-const userSchema = new Schema({
+const courseSchema = new Schema({
 
-    username : {
+    title : {
         type : String,
         required: true
     },
-    password: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true
-    },
-    group: {
+
+    course_length: {
         type: Number,
         required: true
     },
-    role_id: {
-
+    course_description: {
         type: String,
         required: true
     },
+    course_content: {
+        type: String,
+        required: true
+    },
+    course_image: {
+        type: String,
+        required: true
+    },
+   
 });
 
-export const User = mongoose.model('User', userSchema);
+export const Course = mongoose.model('Course', courseSchema);
