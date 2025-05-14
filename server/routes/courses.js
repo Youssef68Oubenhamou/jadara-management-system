@@ -1,12 +1,12 @@
   import express from "express";
-  import {create , read, update, remove} from "../controllers/courseController"
+  import {createCourse , getCourses , updateCourse, deleteCourse} from "../controllers/courseController.js"
   
   export const router = express.Router();
   
   
-  router.post('/', create);
-  router.get('/', read);
-  router.put('/:_id', update);
-  router.delete('/:_id', remove);
+  router.post('/create', createCourse);
+  router.get('/get', getCourses);
+  router.put('/update/:id', updateCourse);
+  router.delete('/remove/:id', deleteCourse);
 
  
