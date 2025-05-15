@@ -1,4 +1,4 @@
-import Validator from "validatorjs";
+import validator from "validatorjs";
 
 export const registerValidation = async (req , res , next) => {
 
@@ -10,11 +10,11 @@ export const registerValidation = async (req , res , next) => {
 
     }
 
-    await Validator(req.body , validateRule , {} , (err , status) => {
+    await validator(req.body , validateRule , {} , (err , status) => {
 
         if (!status) {
 
-            res.status(412).send({ message: "validation Failed" })
+            res.status(412).send({ message: "validation Failed" });
 
         } else {
 
