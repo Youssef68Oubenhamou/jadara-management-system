@@ -1,8 +1,8 @@
 import express from "express";
 import {register,users, login } from "../controllers/userController.js"
 import userProfile from "../controllers/userController.js"
-import {registerValidation,loginValidation} from "../middelwares/authValidator.js"
-import verifyToken from "../middelwares/authJwt.js"
+import {registerValidation,loginValidation} from "../middlewares/authValidator.js"
+import verifyToken from "../middlewares/authJwt.js"
 
 export const router = express.Router();
 
