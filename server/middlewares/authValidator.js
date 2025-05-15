@@ -1,6 +1,6 @@
-import validator from "validatorjs";
+import Validator from "validatorjs";
 
-export const registerValidation = async (req , res , next) => {
+export const registerValidation = (req , res , next) => {
 
     const validateRule = {
 
@@ -12,23 +12,17 @@ export const registerValidation = async (req , res , next) => {
 
     }
 
-    await validator(req.body , validateRule , {} , (err , status) => {
+    const validation = new Validator(req.body , validateRule);
 
-        if (!status) {
+    if (validation.fails()) {
 
-            res.status(412).send({ message: "validation Failed" });
+        res.status(412).send({ message: "validation Failed" });
 
-        } else {
+    } else {
 
-            next();
+        next();
 
-        }
-
-    }).catch((err) => {
-
-        console.log(err);
-
-    })
+    }
 
 }
 
@@ -41,22 +35,16 @@ export const loginValidation = async (req , res , next) => {
 
     };
 
-    await Validator(req.body , validateRule , {} , (err , status) => {
+    const validation = new Validator(req.body , validateRule);
 
-        if (!status) {
+    if (validation.fails()) {
 
-            res.status(412).send({ message: "Validation Failed" })
+        res.status(412).json({ message: "You failed to login" });
 
-        } else {
+    } else {
 
-            next();
+        next();
 
-        }
-
-    }).catch((err) => {
-
-        console.log(err);
-
-    })
+    }
 
 }
