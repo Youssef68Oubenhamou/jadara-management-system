@@ -1,6 +1,5 @@
 import express from "express";
-import {register,users, login } from "../controllers/userController.js"
-import userProfile from "../controllers/userController.js"
+import {register,users, login , userProfile } from "../controllers/userController.js"
 import {registerValidation,loginValidation} from "../middlewares/authValidator.js"
 import verifyToken from "../middlewares/authJwt.js"
 
