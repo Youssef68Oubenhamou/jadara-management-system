@@ -27,7 +27,7 @@ export const createCourse = async (req, res) => {
 export const updateCourse = async (req, res) => {
   const { id : _id} = req.params;
   try {
-    const course = await Course.findByIdAndUpdate(id, req.body, { new: true });
+    const course = await Course.findByIdAndUpdate(_id, req.body, { new: true });
     res.status(200).json(course);
   } catch (error) {
     res.status(500).json({ message: 'Error updating course' });
