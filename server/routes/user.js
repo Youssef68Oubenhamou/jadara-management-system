@@ -3,7 +3,7 @@ import {register,users, login , userProfile } from "../controllers/userControlle
 import {registerValidation,loginValidation} from "../middlewares/authValidator.js"
 import verifyToken from "../middlewares/authJwt.js"
 
-export const router = express.Router();
+const router = express.Router();
 
 // registre route with registre validation
 router.post("/register", registerValidation,register);
@@ -18,8 +18,7 @@ router.get("/profile/:id" ,verifyToken,userProfile);
 router.get("/users", verifyToken,users);
 
 
-
-
+export default router;
 
 
 
