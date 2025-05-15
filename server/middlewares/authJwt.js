@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 
 export default (req , res , next) => {
 
+    console.log("hello bro for verifyToken");
+
     try {
 
         const token = req.headers.authorization.replace("Bearer " , "");
