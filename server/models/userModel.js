@@ -20,9 +20,7 @@ const userSchema = new Schema({
         required: true
     },
     role_id: {
-
-        type: String,
-        required: true
+        type: String
     },
 });
 
