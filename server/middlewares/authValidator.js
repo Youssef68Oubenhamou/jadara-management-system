@@ -7,8 +7,7 @@ export const registerValidation = (req , res , next) => {
         "username":"required|string|min:3",
         "email":"required|email",
         "password":"required|min:6",
-        "group":"required",
-        "role_id":"required"
+        "group":"required"
 
     }
 
