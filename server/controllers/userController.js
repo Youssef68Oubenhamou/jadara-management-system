@@ -177,7 +177,7 @@ export const users = asyncHandler( async(req , res) => {
 
     try {
         
-        const users = User.find();
+        const users = await User.find();
 
         console.log(users);
 
