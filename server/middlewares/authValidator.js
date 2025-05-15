@@ -1,64 +1,62 @@
-// import validator from "validatorjs";
+import validator from "validatorjs";
 
 export const registerValidation = async (req , res , next) => {
 
-    // const validateRule = {
+    const validateRule = {
 
-    //     "username":"required|string|min:3",
-    //     "email":"required|email",
-    //     "password":"required|min:6",
+        "username":"required|string|min:3",
+        "email":"required|email",
+        "password":"required|min:6",
+        "group":"required",
+        "role_id":"required"
 
-    // }
+    }
 
-    // await validator(req.body , validateRule , {} , (err , status) => {
+    await validator(req.body , validateRule , {} , (err , status) => {
 
-    //     if (!status) {
+        if (!status) {
 
-    //         res.status(412).send({ message: "validation Failed" });
+            res.status(412).send({ message: "validation Failed" });
 
-    //     } else {
+        } else {
 
-    //         next();
+            next();
 
-    //     }
+        }
 
-    // }).catch((err) => {
+    }).catch((err) => {
 
-    //     console.log(err);
+        console.log(err);
 
-    // })
-
-    next();
+    })
 
 }
 
 export const loginValidation = async (req , res , next) => {
 
-    // const validateRule = {
+    const validateRule = {
 
-    //     "email":"required|email",
-    //     "password":"required|min:6"
+        "email":"required|email",
+        "password":"required|min:6"
 
-    // };
+    };
 
-    // await Validator(req.body , validateRule , {} , (err , status) => {
+    await Validator(req.body , validateRule , {} , (err , status) => {
 
-    //     if (!status) {
+        if (!status) {
 
-    //         res.status(412).send({ message: "Validation Failed" })
+            res.status(412).send({ message: "Validation Failed" })
 
-    //     } else {
+        } else {
 
-    //         next();
+            next();
 
-    //     }
+        }
 
-    // }).catch((err) => {
+    }).catch((err) => {
 
-    //     console.log(err);
+        console.log(err);
 
-    // })
-
-    next();
+    })
 
 }
