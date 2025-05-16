@@ -7,24 +7,26 @@ export default (req , res , next) => {
 
     console.log("hello bro for verifyToken");
 
-    try {
+    const token = req.headers["authorization"];
 
-        const token = req.headers.authorization.split(" ")[1];
-        console.log(token);
-        const decoded = jwt.verify(token , process.env.JWT_SECRET);
-        console.log(decoded);
-        req.userData = decoded;
-        console.log(req.userData);
-        next();
+    if (!token) {
 
-    } catch (err) {
-
-        return res.status(401).json({
-
-            message: "Authentication Failed"
-
-        })
+        res.status(401).json({message: "Authorization Failed"});
 
     }
+    console.log(token);
+    jwt.verify(token , process.env.JWT_SECRET , (err, decoded) => {
+
+        if (err) {
+
+            return res.status(403).json({ message: 'Failed to authenticate token' });
+
+        }
+
+        req.userData = decoded;
+
+        next();
+
+    });
 
 }
