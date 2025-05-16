@@ -43,6 +43,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import userRoutes from "./routes/user.js"
 import courseRoutes from "./routes/courses.js"
+import eventRoutes from "./routes/events.js"
 
 
 dotenv.config(); // Load .env variables first
@@ -60,6 +61,7 @@ app.use(cors());
 // Routes
 app.use('/',userRoutes);
 app.use('/course',courseRoutes);
+app.use('/event',eventRoutes);
 
 // Database connection function
 mongoose.connect(db)
