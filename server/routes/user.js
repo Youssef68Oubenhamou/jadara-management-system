@@ -1,1 +1,24 @@
-console.log()
+import express from "express";
+import {register,users, login , userProfile } from "../controllers/userController.js"
+import {registerValidation,loginValidation} from "../middlewares/authValidator.js"
+import verifyToken from "../middlewares/authJwt.js"
+
+const router = express.Router();
+
+// registre route with registre validation
+router.post("/register", registerValidation,register);
+
+// log in of user
+router.post("/login", loginValidation, login);
+
+// get user profile by using his id 
+router.get("/profile/:id" ,verifyToken,userProfile);
+
+// we use that route to get all users inf
+router.get("/users", verifyToken,users);
+
+
+export default router;
+
+
+
