@@ -7,7 +7,7 @@ export default (req , res , next) => {
 
     console.log("hello bro for verifyToken");
 
-    const token = req.headers["authorization"];
+    const token = req.headers["authorization"].replace("Bearer " , "");
 
     if (!token) {
 
