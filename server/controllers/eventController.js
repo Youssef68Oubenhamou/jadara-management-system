@@ -1,4 +1,4 @@
-import Event from "../models/eventeModel.js"
+import Event from "../models/eventModel.js"
 
 
 
