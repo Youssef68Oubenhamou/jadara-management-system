@@ -134,7 +134,7 @@ export const login = asyncHandler( async (req , res) => {
 
 export const userProfile = asyncHandler( async(req , res , next) => {
 
-    const { _id } = req.params;
+    const { id:_id } = req.params;
 
     try {
         
