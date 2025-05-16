@@ -4,12 +4,14 @@ const Schema = mongoose.Schema;
 const usercourseSchema = new Schema({
 
     user_id : {
-        type : String,
+        type : mongoose.Schema.Types.objectId,
+        ref: "User",
         required: true
     },
 
     course_id: {
-        type: String,
+        type: mongoose.Schema.Types.objectId,
+        ref: "Course",
         required: true
     },
    

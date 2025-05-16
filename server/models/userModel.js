@@ -20,7 +20,9 @@ const userSchema = new Schema({
         required: true
     },
     role_id: {
-        type: String
+        type: mongoose.Schema.Types.objectId,
+        ref: "Role",
+        required: true,        
     },
 });
 
