@@ -202,27 +202,7 @@ export const users = asyncHandler( async(req , res) => {
 
 })
 
-console.log("hello world");
-
 export const deleteUser = async (req , res) => {
-
-    // --------------------------
-
-    req.userData.role_id
-
-    const role = Role.findById(req.userData.role_id);
-
-    if (role.role_name == "admin") {
-
-        next();
-
-    } else {
-
-        res.status(403).json({ message: "Access Denied !" })
-
-    }
-
-    // --------------------------
 
     const { id: _id } = req.params.id;
 
