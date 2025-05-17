@@ -23,7 +23,7 @@ export default (req , res , next) => {
 
         req.userData = decoded;
 
-        const role = await Role.findById(decoded.role_id);
+        const role = await Role.findById(req.userData.role_id);
 
         if (role.role_name == "admin") {
 
