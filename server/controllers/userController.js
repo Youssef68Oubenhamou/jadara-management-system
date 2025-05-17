@@ -202,7 +202,21 @@ export const users = asyncHandler( async(req , res) => {
 
 })
 
-console.log("hello world");
+export const deleteUser = async (req , res) => {
+
+    const { id: _id } = req.params.id;
+
+    try {
+
+        await User.findAndDeleteById(id , req.body);
+        
+    } catch (error) {
+        
+        throw new Error(error);
+
+    }
+
+}
 
 export const updateUser = async (req , res) => {
 
