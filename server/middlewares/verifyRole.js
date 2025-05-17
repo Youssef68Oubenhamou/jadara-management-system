@@ -1,12 +1,15 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import Role from "../models/roleModel.js"
+import User from "../models/userModel.js"
 
 dotenv.config();
 
 export default (req , res , next) => {
 
     const token = req.headers.authorization.replace("Bearer " , "");
+
+    console.log(token);
 
     if (!token) {
 
@@ -23,7 +26,17 @@ export default (req , res , next) => {
 
         req.userData = decoded;
 
-        const role = await Role.findById(req.userData.role_id);
+        console.log(req.userData);
+
+        const user = await User.find({ email: req.userData.email });
+
+        console.log(user);
+
+        const role = await Role.findById(user[0].role_id);
+
+        console.log(role);
+
+        console.log(role.role_name);
 
         if (role.role_name == "admin") {
 
@@ -32,7 +45,6 @@ export default (req , res , next) => {
         } else {
 
             res.status(403).json({ message: "You don't have the access to this route !" })
-            res.redirect("/course/get");
 
         }
 

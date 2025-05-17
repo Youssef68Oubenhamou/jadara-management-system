@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
+import mongoose from "mongoose";
 
 export const register = asyncHandler(async (req , res) => {
 
@@ -208,7 +209,9 @@ export const deleteUser = async (req , res) => {
 
     try {
 
-        await User.findAndDeleteById(id , req.body);
+        const deletedUser = await User.deleteOne(_id);
+        console.log(deletedUser);
+        res.status(201).json({ message: "User Has been deleted successfuly !" });
         
     } catch (error) {
         
@@ -222,11 +225,13 @@ export const updateUser = async (req , res) => {
 
     const { id: _id } = req.params;
 
-    const newPost = req.body;
+    let newPost = req.body;
+
+    newPost.password = await bcrypt.hash(req.body.password , 10);
 
     try {
         
-        const post = await User.updateOne(_id , newPost);
+        const post = await User.updateOne({_id: new mongoose.Types.ObjectId(_id)} , newPost);
 
         res.status(201).json(post);
 
