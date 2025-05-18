@@ -133,6 +133,24 @@ export const login = asyncHandler( async (req , res) => {
 
 });
 
+export const logout = asyncHandler( async(req, res , nex) => {
+
+    res.cookie("token" , none , {
+
+        expires: new Date((Date.now() + 2) * 1000),
+        httpOnly: true
+
+    });
+
+    res.status(200).json({
+
+        success:true,
+        data:{}
+
+    });
+
+})
+
 export const userProfile = asyncHandler( async(req , res , next) => {
 
     const { id:_id } = req.params;
