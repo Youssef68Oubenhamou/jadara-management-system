@@ -23,4 +23,5 @@ router.put("/usr/update/:id" ,  verifyRole,updateUser)
 
 router.delete("/usr/delete/:id" , verifyRole, deleteUser)
 
+
 export default router;
