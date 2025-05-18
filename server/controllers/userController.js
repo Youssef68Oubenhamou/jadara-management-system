@@ -135,7 +135,7 @@ export const login = asyncHandler( async (req , res) => {
 
 export const logout = asyncHandler( async(req, res , next) => {
 
-    req.headers.authorization = null;
+    console.log(req.userData);
     
     res.cookie("token" , "none" , {
 
