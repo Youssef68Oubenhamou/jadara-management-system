@@ -135,7 +135,7 @@ export const login = asyncHandler( async (req , res) => {
 
 export const logout = asyncHandler( async(req, res , nex) => {
 
-    res.cookie("token" , none , {
+    res.cookie("token" , "none" , {
 
         expires: new Date((Date.now() + 2) * 1000),
         httpOnly: true
