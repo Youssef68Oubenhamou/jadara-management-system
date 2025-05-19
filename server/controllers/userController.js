@@ -136,28 +136,34 @@ export const login = asyncHandler( async (req , res) => {
 
 export const logout = asyncHandler( async(req, res , next) => {
 
-    const client = redis.createClient();
+    // const client = redis.createClient({
 
-    client.connect();
+    //     url: 'redis://redis:6379'
 
-    async function blacklistToken(token) {
+    // });
 
-        const expirySeconds = 60 * 60;
-        await client.set(`blacklist_${token}`, 'true', {
-            EX: expirySeconds,
-        });
-    }
+    // await client.connect();
 
-    const token = req.headers.authorization.split(" ")[1];
+    // async function blacklistToken(token) {
 
-    blacklistToken(token);
+    //     const expirySeconds = 60 * 60;
+    //     await client.set(`blacklist_${token}`, 'true', {
+    //         EX: expirySeconds,
+    //     });
+    // }
+
+    // const token = req.headers.authorization.split(" ")[1];
+
+    // blacklistToken(token);
     
-    res.cookie("token" , "none" , {
+    // res.cookie("token" , "none" , {
 
-        expires: new Date(0),
-        httpOnly: true
+    //     expires: new Date(0),
+    //     httpOnly: true
 
-    });
+    // });
+
+    res.clearCookie();
 
     res.status(200).json({
 
