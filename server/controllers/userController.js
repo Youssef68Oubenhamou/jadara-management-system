@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import mongoose from "mongoose";
+import redis from "redis";
 
 export const register = asyncHandler(async (req , res) => {
 
@@ -135,11 +136,25 @@ export const login = asyncHandler( async (req , res) => {
 
 export const logout = asyncHandler( async(req, res , next) => {
 
-    console.log(req.userData.tokens);
+    const client = redis.createClient();
+
+    client.connect();
+
+    async function blacklistToken(token) {
+
+        const expirySeconds = 60 * 60;
+        await client.set(`blacklist_${token}`, 'true', {
+            EX: expirySeconds,
+        });
+    }
+
+    const token = req.headers.authorization.split(" ")[1];
+
+    blacklistToken(token);
     
     res.cookie("token" , "none" , {
 
-        expires: new Date(Date.now() + 10 * 1000),
+        expires: new Date(0),
         httpOnly: true
 
     });
