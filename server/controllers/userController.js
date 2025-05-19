@@ -116,6 +116,12 @@ export const login = asyncHandler( async (req , res) => {
 
                 })
 
+                res.cookie("token" , jwtToken , {
+
+                    httpOnly: true
+
+                })
+
                 return res.status(200).json({accessToken: jwtToken , userId: getUser._id})
 
             }
@@ -135,26 +141,6 @@ export const login = asyncHandler( async (req , res) => {
 });
 
 export const logout = asyncHandler( async(req, res , next) => {
-
-    // const client = redis.createClient({
-
-    //     url: 'redis://redis:6379'
-
-    // });
-
-    // await client.connect();
-
-    // async function blacklistToken(token) {
-
-    //     const expirySeconds = 60 * 60;
-    //     await client.set(`blacklist_${token}`, 'true', {
-    //         EX: expirySeconds,
-    //     });
-    // }
-
-    // const token = req.headers.authorization.split(" ")[1];
-
-    // blacklistToken(token);
     
     // res.cookie("token" , "none" , {
 
@@ -163,7 +149,7 @@ export const logout = asyncHandler( async(req, res , next) => {
 
     // });
 
-    res.clearCookie();
+    res.clearCookie("token");
 
     res.status(200).json({
 
