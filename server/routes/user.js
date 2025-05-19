@@ -24,7 +24,7 @@ router.put("/usr/update/:id" ,  verifyRole,updateUser)
 router.delete("/usr/delete/:id" , verifyRole, deleteUser)
 
 // log out router
-router.post('/logout', verifyToken,logout)
+router.delete('/logout', verifyToken,logout)
 
 
 export default router;
