@@ -1,5 +1,5 @@
 import express from "express";
-import {register,users, login , userProfile , updateUser, deleteUser } from "../controllers/userController.js"
+import {register,users, login , userProfile , updateUser, deleteUser, logout } from "../controllers/userController.js"
 import {registerValidation,loginValidation} from "../middlewares/authValidator.js"
 import verifyRole from "../middlewares/verifyRole.js"
 import verifyToken from "../middlewares/authJwt.js"
@@ -22,6 +22,9 @@ router.get("/users", verifyToken,users);
 router.put("/usr/update/:id" ,  verifyRole,updateUser)
 
 router.delete("/usr/delete/:id" , verifyRole, deleteUser)
+
+// log out router
+router.delete('/logout', verifyToken,logout)
 
 
 export default router;

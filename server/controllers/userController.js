@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import mongoose from "mongoose";
+import redis from "redis";
 
 export const register = asyncHandler(async (req , res) => {
 
@@ -115,6 +116,12 @@ export const login = asyncHandler( async (req , res) => {
 
                 })
 
+                res.cookie("token" , jwtToken , {
+
+                    httpOnly: true
+
+                })
+
                 return res.status(200).json({accessToken: jwtToken , userId: getUser._id})
 
             }
@@ -132,6 +139,22 @@ export const login = asyncHandler( async (req , res) => {
         })
 
 });
+
+export const logout = asyncHandler( async(req, res , next) => {
+    
+    req.headers.authorization = null;
+
+    res.clearCookie("token");
+
+    res.status(200).json({
+
+        success:true,
+        message: "User Loged Out Successfuly !",
+        data:{}
+
+    });
+
+})
 
 export const userProfile = asyncHandler( async(req , res , next) => {
 
