@@ -20,10 +20,6 @@ interface courseProps {
 
 const Course: React.FC<courseProps> = ({ title , length , description , content , image }) => {
 
-    const [ enroll , setEnroll ] = useState(false);
-
-    fetch("")
-
     return (
 
         <Card className="h-60">
