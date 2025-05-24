@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import type React from "react";
 import { Button } from "./ui/button";
-import { useState } from "react";
 
 interface courseProps {
   title: string;
@@ -33,7 +32,7 @@ const Course: React.FC<courseProps> = ({ title , length , description , content 
             </CardContent>
             <CardFooter className="flex justify-between">
                 <p className="text-muted-foreground">Duration: { length } h</p>
-                <Button variant="outline" onClick={() => setEnroll(true)}>Enroll</Button>
+                <Button variant="outline">Enroll</Button>
             </CardFooter>
         </Card>
 
