@@ -7,6 +7,8 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import type React from "react";
+import { Button } from "./ui/button";
+import { useState } from "react";
 
 interface courseProps {
   title: string;
@@ -17,19 +19,25 @@ interface courseProps {
 }
 
 const Course: React.FC<courseProps> = ({ title , length , description , content , image }) => {
+
+    const [ enroll , setEnroll ] = useState(false);
+
+    fetch("")
+
     return (
 
-        <Card className="w-70 h-60">
+        <Card className="h-60">
             <CardHeader>
                 <CardTitle>{ image }</CardTitle>
-                <CardDescription>{ title }</CardDescription>
+                <CardDescription>Title: { title }</CardDescription>
             </CardHeader>
             <CardContent>
-                <p>{ description }</p>
+                <p className="text-muted-foreground">Description: { description }</p>
                 <p>{ content }</p>
             </CardContent>
-            <CardFooter>
-                <p>{ length }</p>
+            <CardFooter className="flex justify-between">
+                <p className="text-muted-foreground">Duration: { length } h</p>
+                <Button variant="outline" onClick={() => setEnroll(true)}>Enroll</Button>
             </CardFooter>
         </Card>
 

@@ -9,6 +9,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Link } from "react-router-dom"
 
 // Menu items.
 const items = [
@@ -19,7 +20,7 @@ const items = [
   },
   {
     title: "Courses",
-    url: "#",
+    url: "/stuCourses",
     icon: Inbox,
   },
   {
@@ -49,10 +50,10 @@ export function AppSidebar() {
                         {items.map((item) => (
                             <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton asChild>
-                                <a href={item.url}>
-                                <item.icon />
-                                <span>{item.title}</span>
-                                </a>
+                                <Link to={item.url}>
+                                    <item.icon />
+                                    <span>{item.title}</span>
+                                </Link>
                             </SidebarMenuButton>
                             </SidebarMenuItem>
                         ))}

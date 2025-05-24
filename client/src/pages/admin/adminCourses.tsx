@@ -1,19 +1,32 @@
-import Course from "@/components/course";
 import { useState , useEffect } from "react";
+import {
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
+} from "@tanstack/react-table"
+ 
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
 
-export interface dataType {
-
+type Course = {
+    _id: string;
     title: string;
     course_length: number;
     course_description: string;
     course_content: string;
     course_image: string;
-
 }
 
-const StudentCourses = () => {
+const AdminCourses = () => {
 
-    const [ courses , setCourses ] = useState<dataType[]>([]);
+    const [ courses , setCourses ] = useState<Course[]>([]);
 
     useEffect(() => {
 
@@ -38,20 +51,20 @@ const StudentCourses = () => {
     } , []);
 
     return (
-      <div className="flex justify-around flex-wrap">
+        <div>
+            
+            {
 
-          {
+                courses && courses.map((course) => {
 
-              courses && courses.map((course) => {
+                    return <></>
 
-                  return <Course title={course.title} length={course.course_length} description={course.course_description} content={course.course_content} image={course.course_image} />
+                })
 
-              })
+            }
 
-          }
-
-      </div>
+        </div>
     )
 }
 
-export default StudentCourses;
+export default AdminCourses;
