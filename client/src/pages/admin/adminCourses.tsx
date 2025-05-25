@@ -1,19 +1,19 @@
-import { useState , useEffect } from "react";
-import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-} from "@tanstack/react-table"
+// import { useState , useEffect } from "react";
+// import {
+//     ColumnDef,
+//     flexRender,
+//     getCoreRowModel,
+//     useReactTable,
+// } from "@tanstack/react-table"
  
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+// import {
+//     Table,
+//     TableBody,
+//     TableCell,
+//     TableHead,
+//     TableHeader,
+//     TableRow,
+// } from "@/components/ui/table"
 
 type Course = {
     _id: string;
@@ -26,40 +26,40 @@ type Course = {
 
 const AdminCourses = () => {
 
-    const [ courses , setCourses ] = useState<Course[]>([]);
+    // const [ courses , setCourses ] = useState<Course[]>([]);
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        fetch("http://localhost:5000/course/get")
-            .then((res) => {
+    //     fetch("http://localhost:5000/course/get")
+    //         .then((res) => {
 
-                return res.json();
+    //             return res.json();
 
-            })
-            .then((data) => {
+    //         })
+    //         .then((data) => {
 
-                setCourses(data);
-                console.log(data);
+    //             setCourses(data);
+    //             console.log(data);
 
-            })
-            .catch((err) => {
+    //         })
+    //         .catch((err) => {
 
-                console.log(err);
+    //             console.log(err);
 
-            })
+    //         })
 
-    } , []);
+    // } , []);
 
     return (
         <div>
             
             {
 
-                courses && courses.map((course) => {
+                // courses && courses.map((course) => {
 
-                    return <></>
+                //     return <></>
 
-                })
+                // })
 
             }
 
