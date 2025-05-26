@@ -5,10 +5,14 @@ import { QueryClient , QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Course from './components/course';
 import StudentCourses from './pages/student/studentCourses';
+import { useState } from "react";
+import AdminCourses from "./pages/admin/adminCourses";
 
 const queryClient = new QueryClient();
 
 const App = () => {
+
+    const [ isAdmin , setIsAdmin ] = useState("admin");
 
     return (
         <QueryClientProvider client={queryClient}>
@@ -17,7 +21,7 @@ const App = () => {
 
                     <Layout>
                         <Routes>
-                            <Route path="/stuCourses" element={<StudentCourses />} />
+                            <Route path="/stuCourses" element={isAdmin == "admin" ? <AdminCourses /> : <StudentCourses />} />
                             <Route path="/student/:courseId" element={<Course title={''} length={0} description={''} content={''} image={''} />} />
                         </Routes>
                     </Layout>
