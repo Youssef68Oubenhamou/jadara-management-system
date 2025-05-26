@@ -1,4 +1,4 @@
-// components/CarouselSize.tsx
+
 import React from "react";
 import {
   Carousel,
@@ -19,13 +19,13 @@ const sizeMap = {
   lg: "w-[600px] h-[400px]",
 };
 
-const CarouselSize: React.FC<CarouselSizeProps> = ({ size = "md", children }) => {
+const eventStudent: React.FC<CarouselSizeProps> = ({ size = "md", children }) => {
   return (
     <div className={`mx-auto ${sizeMap[size]}`}>
       <Carousel>
         <CarouselContent>
-          {children.map((child, idx) => (
-            <CarouselItem key={idx} className="flex items-center justify-center">
+          {children.map((child) => (
+            <CarouselItem  className="flex items-center justify-center">
               {child}
             </CarouselItem>
           ))}
@@ -37,4 +37,7 @@ const CarouselSize: React.FC<CarouselSizeProps> = ({ size = "md", children }) =>
   );
 };
 
-export default CarouselSize;
+export default eventStudent;
+
+
+
