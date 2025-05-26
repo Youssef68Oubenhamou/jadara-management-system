@@ -1,16 +1,18 @@
-import Event from './pages/student/event'
+// // App.tsx
+// import React from "react";
+// import CarouselSize from "@/components/eventStudent.";
+// import EventStudent from "@/components/eventStudent.";
+// import Event from "./pages/student/event";
 
-const App = () => {
+// function App() {
+//   return (
+//     <div className="p-10">
+//       <h1 className="text-2xl mb-4">My Carousel</h1>
+//       <CarouselSize size="lg">
+//         {[<EventStudent />, <Event />, <EventStudent />]}
+//       </CarouselSize>
+//     </div>
+//   );
+// }
 
-    return (
-        <>
-        
-            <h1>hello world</h1>
-            <Event />
-        
-        </>
-    )
-
-}
-
-export default App;
+// export default App;
