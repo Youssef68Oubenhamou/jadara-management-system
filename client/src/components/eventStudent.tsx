@@ -24,8 +24,8 @@ const eventStudent: React.FC<CarouselSizeProps> = ({ size = "md", children }) =>
     <div className={`mx-auto ${sizeMap[size]}`}>
       <Carousel>
         <CarouselContent>
-          {children.map((child) => (
-            <CarouselItem  className="flex items-center justify-center">
+          {children.map((child , index) => (
+            <CarouselItem key={index} className="flex items-center justify-center">
               {child}
             </CarouselItem>
           ))}

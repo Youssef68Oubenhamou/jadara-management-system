@@ -9,7 +9,7 @@ type EventCardProps = {
 
 const EventCard = ({ title, date, description, image }: EventCardProps) => {
   return (
-    <div className="bg-white text-black rounded-xl shadow-md p-4 w-full h-full flex flex-raw">
+    <div className="bg-yellow-100 text-black rounded-xl shadow-md p-4 w-full h-full flex flex-raw">
       <img
         src={image}
         className="w-30 h-30 object-cover rounded-md mb-2"
