@@ -1,46 +1,128 @@
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "@/context/AuthContext"
+import { useContext } from "react"
 
 
-const Login = () => {
+// Update schema to match the fields being used
+const formSchema = z.object({
+    email: z.string().email({ message: "Invalid email address." }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+})
+
+type FormValues = z.infer<typeof formSchema>
+
+export function Login() {
+
+    // const [ credent , setCredent ] = useState<>([]);
+    const navigate = useNavigate();
+
+    const authContext = useContext(AuthContext);
+
+    if (!authContext) {
+        throw new Error("AuthContext is null — make sure <AuthProvider> wraps your app.");
+    }
+
+    const { setToken } = authContext;
+
+    const form = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    })
+
+    const onSubmit = (data: FormValues) => {
+        console.log("Form submitted with:", data)
+        // Perform login logic here
+
+        fetch("http://localhost:5000/login" , {
+
+            method: "POST",
+            headers: {
+
+                "Content-Type": "application/json"
+
+            },
+            body: JSON.stringify({ email: data.email , password: data.password })
+          
+        })
+            .then((res) => {
+
+                return res.json();
+
+            })
+            .then((credentials) => {
+
+                console.log(credentials.accessToken);
+
+                setToken(credentials.accessToken);
+                localStorage.setItem("token" , credentials.accessToken);
+                navigate("/stuCourses");
+
+            })
+            .catch((err) => {
+
+                console.log(err);
+                setToken(null);
+                localStorage.removeItem("token");
+
+            })
+
+    }
+
   return (
-    <Card className="w-[350px]">
-      <CardHeader className="text-center">
-        
-        
-        <CardTitle>Login</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid w-full gap-7">
-          <div className="grid gap-2 items-start space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" />
-          </div>
-          <div className="grid gap-2 items-start space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" />
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button className="w-full">Login</Button>
-      </CardFooter>
-      <div className="mt-4 text-center">
-        <Link to="/register" className="text-blue-600 hover:underline">
-          Don't have an account? Sign up
-        </Link>
-      </div>
-    </Card>
-  );
-};
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 w-100">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="email" {...field} />
+              </FormControl>
+              <FormDescription>This is your email.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="password" {...field} />
+              </FormControl>
+              <FormDescription>This is your password.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Sign In</Button>
+      </form>
+    </Form>
+  )
+}
 
 export default Login;

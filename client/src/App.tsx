@@ -7,29 +7,34 @@ import Course from './components/course';
 import StudentCourses from './pages/student/studentCourses';
 import { useState } from "react";
 import AdminCourses from "./pages/admin/adminCourses";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Logout from "./pages/logout";
 
-const queryClient = new QueryClient();
+
+// const queryClient = new QueryClient();
 
 const App = () => {
 
     const [ isAdmin , setIsAdmin ] = useState("admin");
 
     return (
-        <QueryClientProvider client={queryClient}>
+        // <QueryClientProvider client={queryClient}>
             <BrowserRouter>
                 <ThemeProvider defaultTheme="dark">
-
                     <Layout>
                         <Routes>
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
+                            <Route path="/logout" element={<Logout />} />
                             <Route path="/stuCourses" element={isAdmin == "admin" ? <AdminCourses /> : <StudentCourses />} />
                             <Route path="/student/:courseId" element={<Course title={''} length={0} description={''} content={''} image={''} />} />
                         </Routes>
                     </Layout>
-
                 </ThemeProvider>
             </BrowserRouter>
-            <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
+            // <ReactQueryDevtools initialIsOpen={false} />
+        // </QueryClientProvider>
     )
 }
 
