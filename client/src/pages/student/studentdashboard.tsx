@@ -135,6 +135,9 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
+import { Navigate } from "react-router-dom"
 
 interface User {
   username: string
@@ -177,6 +180,25 @@ const users: User[] = [
 ]
 
 const UserList: React.FC = () => {
+
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+
+    console.log("An error Occured when wrapping the App component with the Provider !");
+
+  }
+
+  const { token , loading } = authContext;
+
+  if (loading) {
+      return null;
+  }
+
+  if (!token) {
+      return <Navigate to="/login" replace />;
+  }
+
   return (
     <Card>
       <CardHeader>

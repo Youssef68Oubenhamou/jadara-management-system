@@ -27,7 +27,7 @@ const items = [
   },
   {
     title: "Users",
-    url: "/student",
+    url: "/stuClass",
     icon: Calendar,
   },
   {

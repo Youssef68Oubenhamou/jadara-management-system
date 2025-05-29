@@ -11,6 +11,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
+import { Navigate } from "react-router-dom"
 
 type Event = {
   _id: string
@@ -29,6 +32,16 @@ const EventPageAdmin = () => {
     date_event: "",
     image: "",
   })
+
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+
+    console.log("An error Occured when wrapping the App component with the Provider !");
+
+  }
+
+  const { token , loading } = authContext;
 
   useEffect(() => {
     fetchEvents()
@@ -78,6 +91,14 @@ const EventPageAdmin = () => {
     } catch (err) {
       console.error(err)
     }
+  }
+
+  if (loading) {
+      return null;
+  }
+
+  if (!token) {
+      return <Navigate to="/login" replace />;
   }
 
   return (

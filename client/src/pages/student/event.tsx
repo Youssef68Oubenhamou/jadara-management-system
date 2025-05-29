@@ -34,6 +34,9 @@
 import { useEffect, useState } from "react";
 import EventStudent from "@/components/eventStudent";
 import EventCard from "@/components/EventCard";
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
+import { Navigate } from "react-router-dom"
 
 type EventType = {
   _id: string;
@@ -46,6 +49,16 @@ type EventType = {
 
 export default function Event() {
   const [events, setEvents] = useState<EventType[]>([]);
+
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+
+    console.log("An error Occured when wrapping the App component with the Provider !");
+
+  }
+
+  const { token , loading } = authContext;
 
   useEffect(() => {
     fetch("http://localhost:5000/event/get")
@@ -64,6 +77,15 @@ export default function Event() {
         console.log(err);
       });
   }, []);
+
+  if (loading) {
+      return null;
+  }
+
+  if (!token) {
+      return <Navigate to="/login" replace />;
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-blue-100 rounded-xl shadow-md flex flex-col">
       <h1 className="text-2xl font-bold mb-4 text-center">📅 Upcoming events</h1>

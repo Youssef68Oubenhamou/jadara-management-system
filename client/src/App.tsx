@@ -37,10 +37,8 @@ export default function App() {
                         <Route path="/logout" element={<Logout />} />
                         <Route path="/stuCourses" element={userType == "admin" ? <AdminCourses /> : <StudentCourses />} />
                         <Route path="/student/:courseId" element={<Course title={''} length={0} description={''} content={''} image={''} />} />
-                        <Route path="/student" element={<UserList/>} />
-                        <Route path="/admin" element={<AdminPage/>} />
-                        <Route path="/stuEvents" element={<Event />} />
-                        <Route path="/admEvents" element={<Events />} />
+                        <Route path="/stuClass" element={userType == "admin" ? <AdminPage /> : <UserList/>} />
+                        <Route path="/stuEvents" element={userType == "admin" ? <Events /> : <Event />} />
                     </Routes>
                 </Layout>
             </ThemeProvider>

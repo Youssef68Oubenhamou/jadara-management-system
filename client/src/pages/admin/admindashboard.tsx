@@ -221,6 +221,9 @@ import {
 import { PieChart, Pie, Tooltip, Cell, Label } from "recharts"
 import { TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
+import { Navigate } from "react-router-dom"
 
 const data = [
   { name: "Chrome", value: 275, color: "#8884d8" },
@@ -238,6 +241,16 @@ const users = [
 export default function AdminPage() {
   const total = data.reduce((acc, item) => acc + item.value, 0)
 
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+
+    console.log("An error Occured when wrapping the App component with the Provider !");
+
+  }
+
+  const { token , loading } = authContext;
+
   const handleDelete = (userId: number) => {
     console.log("Deleting user:", userId)
     // TODO: Add delete API logic
@@ -246,6 +259,14 @@ export default function AdminPage() {
   const handleUpdate = (userId: number) => {
     console.log("Updating user:", userId)
     // TODO: Add update logic or modal
+  }
+  
+  if (loading) {
+      return null;
+  }
+
+  if (!token) {
+      return <Navigate to="/login" replace />;
   }
 
   return (
