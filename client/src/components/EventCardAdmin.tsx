@@ -30,7 +30,6 @@
 
 
 
-// components/EventCardAdmin.tsx
 type EventCardProps = {
   title: string
   description: string

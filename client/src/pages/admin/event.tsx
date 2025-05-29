@@ -83,13 +83,13 @@ const EventPageAdmin = () => {
   return (
     <div className="p-5">
       <div className="flex justify-between items-center mb-9">
-        <h1 className="text-2xl font-bold text-center">📊 Events Dashboard</h1>
+        <h1 className="text-2xl font-bold text-center ml-115">📊 Events Dashboard</h1>
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className=''>Add Event</Button>
+            <Button className="bg-lime-500 text-white font-semibold hover:bg-lime-600 rounded-md shadow-md">Add Event</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="bg-gradient-to-br from-yellow-100 via-blue to-yellow-100">
             <DialogHeader>
               <DialogTitle>Create New Event</DialogTitle>
             </DialogHeader>
@@ -115,7 +115,7 @@ const EventPageAdmin = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="image">Image URL</Label>
+                <Label htmlFor="image">Image URL or path</Label>
                 <Input
                   id="image"
                   name="image"
@@ -134,7 +134,7 @@ const EventPageAdmin = () => {
                   placeholder="Description"
                 />
               </div>
-              <Button onClick={handleAddEvent}>Submit</Button>
+              <Button className="bg-lime-500 text-white font-semibold hover:bg-lime-600 rounded-md shadow-md" onClick={handleAddEvent}>Submit</Button>
             </div>
           </DialogContent>
         </Dialog>
