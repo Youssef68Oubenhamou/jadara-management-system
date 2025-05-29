@@ -56,7 +56,7 @@ const db = process.env.MONGODB_URI;
 // Middleware setup
 app.use(bodyParser.json({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 // Routes
 app.use('/',userRoutes);
