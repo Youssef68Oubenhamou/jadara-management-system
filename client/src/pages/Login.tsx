@@ -15,7 +15,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext"
 import { useContext } from "react"
 
@@ -96,6 +96,7 @@ export function Login() {
     }
 
   return (
+    <>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 w-100">
         <FormField
@@ -127,8 +128,10 @@ export function Login() {
           )}
         />
         <Button type="submit">Sign In</Button>
+        <p>If you don't have an Account Please <Link to="/register" className="text-blue-600">Sign Up</Link></p>
       </form>
     </Form>
+  </>
   )
 }
 

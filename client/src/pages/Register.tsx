@@ -15,7 +15,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { AuthContext } from "@/context/AuthContext"
 import { useContext } from "react";
 
@@ -155,6 +155,7 @@ function Register() {
                   )}
                 />
                 <Button type="submit">Sign Up</Button>
+                <p>If you already have an Account <Link to="/login" className="text-blue-600">Sign In</Link></p>
             </form>
         </Form>
     )
