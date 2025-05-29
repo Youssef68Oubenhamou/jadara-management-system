@@ -1,52 +1,85 @@
 
-import { Carousel, CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious
-} from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
+// import EventStudent from "@/components/eventStudent";
+// import EventCard from "@/components/EventCard";
+
+// const events = [
+//   { title: "javaScript event", image:"/images/JS.png", date: "2025-06-01", description: "y auras une event import la prochaine semaine à partir de 12:00h dans l'école de coding SMTA" },
+//   { title: "mongoDB event",image:"/images/mongoDB.jpg", date: "2025-06-10", description: "y auras une event import la prochaine semaine à partir de 12:00h dans l'école de coding SMTA" },
+//   { title: "NODE event",image:"/images/NODE.jpg", date: "2025-06-15", description: "third event desxeption" },
+//   { title: "React event", image:"/images/React.avif",date: "2025-06-20", description: "fourt event description" },
+//   { title: "EVENT 5",image:"/images/mongoDB.jpg", date: "2025-06-25", description: "fifth event description" },
+// ];
+
+// export default function Event() {
+//   return (
+// <div className="max-w-4xl mx-auto p-6 bg-blue-100 rounded-xl shadow-md flex flex-col ">
+//   <h1 className="text-2xl font-bold mb-4 text-center">📅 Upcoming events</h1>
+
+//   <EventStudent size="lg">
+//     {events.map((event, index) => (
+//       <EventCard
+//         key={index}
+//         title={event.title}
+//         date={event.date}
+//         description={event.description}
+//         image={event.image}
+//       />
+//     ))}
+//   </EventStudent>
+// </div>
+//   );
+// }
 
 
-export default function EventCarousel() {
+import { useEffect, useState } from "react";
+import EventStudent from "@/components/eventStudent";
+import EventCard from "@/components/EventCard";
 
+type EventType = {
+  _id: string;
+  title_event: string;
+  description_event: string;
+  date_event: string;
+  location_event: string;
+  image: string;
+};
 
+export default function Event() {
+  const [events, setEvents] = useState<EventType[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/event/get")
+      .then((res) => {
+        if (res.ok) {
+
+          return res.json();
+
+        }
+      })
+      .then((data) => {
+        setEvents(data);
+        console.log(data)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return (
-    <div className="w-full max-w-5xl mx-auto px-4">
-      <h2 className="text-2xl font-bold mb-6 text-center text-green-700">📅 Upcoming Events</h2>
-      <Carousel className="w-full">
-        <CarouselContent>
-          {events.map((event, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-              <Card className="h-full flex flex-col">
-                {loading ? (
-                  <div className="w-full h-40 bg-gray-200 rounded-t-lg flex items-center justify-center">
-                    <p>Loading...</p>
-                  </div>
-                ) : (
-                  <img
-                    src={images[index] || sustainable}
-                    alt={event.title}
-                    className="w-full h-40 object-cover rounded-t-lg"
-                  />
-                )}
-                <CardContent className="p-4 flex-1 flex flex-col">
-                  <h3 className="text-lg font-semibold text-green-900">{event.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {event.date} at {event.time}
-                  </p>
-                  <p className="mt-2 text-sm text-gray-700">{event.description}</p>
-                  <p className="mt-auto text-xs text-gray-500">{event.location}</p>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
+    <div className="max-w-4xl mx-auto p-6 bg-blue-100 rounded-xl shadow-md flex flex-col">
+      <h1 className="text-2xl font-bold mb-4 text-center">📅 Upcoming events</h1>
 
-        <div className="flex justify-between mt-4">
-          <CarouselPrevious />
-          <CarouselNext />
-        </div>
-      </Carousel>
+      <EventStudent size="lg">
+        { events && events.map((event, index ) => (
+          <EventCard
+            title={event.title_event}
+            date={event.date_event}
+            description={event.description_event}
+            image={event.image}
+            key={index}
+          />
+        ))}
+      </EventStudent>
     </div>
-  )
+  );
 }
+

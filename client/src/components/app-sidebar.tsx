@@ -15,7 +15,7 @@ import { Link } from "react-router-dom"
 const items = [
   {
     title: "Events",
-    url: "#",
+    url: "/stuEvents",
     icon: Home,
   },
   {
