@@ -15,7 +15,9 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { AuthContext } from "@/context/AuthContext"
+import { useContext } from "react";
 
 // Update schema to match the fields being used
 const formSchema = z.object({
@@ -29,6 +31,14 @@ type FormValues = z.infer<typeof formSchema>
 
 function Register() {
 
+    const navigate = useNavigate();
+
+    if (localStorage.getItem("token") != null) {
+
+        navigate("/stuCourses");
+
+    }
+
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -40,7 +50,49 @@ function Register() {
     })
 
     const onSubmit = (data: FormValues) => {
-        console.log("Form submitted with:", data)
+        console.log("Form submitted with:", data);
+
+        fetch("http://localhost:5000/register" , {
+
+            method: "POST",
+            headers: {
+
+                "Content-Type": "application/json"
+
+            },
+            body: JSON.stringify({
+                username: data.username ,
+                email: data.email ,
+                password: data.password ,
+                group: data.group
+            })
+
+        })
+            .then((res) => {
+
+                return res.json();
+
+            })
+            .then((data) => {
+
+                console.log(data);
+                if (data) {
+
+                    navigate("/login");
+
+                } else {
+
+                    navigate("/register");
+
+                }
+                
+            })
+            .catch((err) => {
+
+                console.log(err);
+
+            })
+
     }
 
     return (

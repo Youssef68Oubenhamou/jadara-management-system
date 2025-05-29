@@ -39,7 +39,13 @@ export function Login() {
         throw new Error("AuthContext is null — make sure <AuthProvider> wraps your app.");
     }
 
-    const { setToken } = authContext;
+    const { setToken , setUserType } = authContext;
+
+    if (localStorage.getItem("token") != null) {
+
+        navigate("/stuCourses");
+
+    }
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -74,6 +80,7 @@ export function Login() {
                 console.log(credentials.accessToken);
 
                 setToken(credentials.accessToken);
+                setUserType(credentials.roleName);
                 localStorage.setItem("token" , credentials.accessToken);
                 navigate("/stuCourses");
 

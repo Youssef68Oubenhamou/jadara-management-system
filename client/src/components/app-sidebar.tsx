@@ -72,7 +72,7 @@ export function AppSidebar() {
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupContent>
-                        <SidebarMenu>
+                        {token && <SidebarMenu>
                         {filteredIcons.map((item) => (
                             <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton asChild>
@@ -84,6 +84,7 @@ export function AppSidebar() {
                             </SidebarMenuItem>
                         ))}
                         </SidebarMenu>
+                        }
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
