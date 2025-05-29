@@ -21,7 +21,7 @@ const sizeMap = {
 
 const eventStudent: React.FC<CarouselSizeProps> = ({ size = "md", children }) => {
   return (
-    <div className={`mx-auto ${sizeMap[size]}`}>
+    <div className={`mx-auto ${sizeMap[size]} `}>
       <Carousel>
         <CarouselContent>
           {children.map((child , index) => (

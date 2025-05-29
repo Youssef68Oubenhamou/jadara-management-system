@@ -57,10 +57,10 @@ import {
 import EventCardAdmin from "./EventCardAdmin"
 
 type Event = {
-  id: number
-  title: string
-  description: string
-  date: string
+  _id: string
+  title_event: string
+  description_event: string
+  date_event: string
   image: string
 }
 
@@ -75,15 +75,15 @@ const EventAdmin = ({ events, orientation = "vertical" }: Props) => {
       <Carousel orientation={orientation}>
         <CarouselContent>
           {events.map((event) => (
-            <CarouselItem key={event.id} className="p-4">
-              <EventCardAdmin
-                title={event.title}
-                description={event.description}
-                date={event.date}
-                image={event.image}
-              />
-            </CarouselItem>
-          ))}
+              <CarouselItem key={event._id} className="p-4">
+                <EventCardAdmin
+                  title={event.title_event}
+                  description={event.description_event}
+                  date={event.date_event}
+                  image={event.image}
+                />
+              </CarouselItem>
+            ))}
         </CarouselContent>
         <CarouselNext />
       </Carousel>
