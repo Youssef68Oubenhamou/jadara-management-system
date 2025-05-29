@@ -5,6 +5,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import mongoose from "mongoose";
 import redis from "redis";
+import Role from "../models/roleModel.js"
 
 export const register = asyncHandler(async (req , res) => {
 
@@ -93,7 +94,7 @@ export const login = asyncHandler( async (req , res) => {
             return bcrypt.compare(password, user.password);
 
         })
-        .then((response) => {
+        .then(async (response) => {
 
             if (!response) {
 
@@ -122,7 +123,9 @@ export const login = asyncHandler( async (req , res) => {
 
                 })
 
-                return res.status(200).json({accessToken: jwtToken , userId: getUser._id})
+                const role = await Role.findById(getUser.role_id);
+
+                return res.status(200).json({accessToken: jwtToken , userId: getUser._id , roleName: role.role_name})
 
             }
 

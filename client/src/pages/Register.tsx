@@ -1,115 +1,164 @@
-import{ useState } from "react";
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import Swal from 'sweetalert2'
- 
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Link, useNavigate } from "react-router-dom"
+import { AuthContext } from "@/context/AuthContext"
+import { useContext } from "react";
 
-const Register = () => {
-  const [username, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [group, setGroup] = useState("");
+// Update schema to match the fields being used
+const formSchema = z.object({
+    username: z.string().min(4 , { message: "Username must be at least 4 characters." }),
+    email: z.string().email({ message: "Invalid email address." }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+    group: z.string().max(1, { message: "Group must be at least 1 number" })
+})
 
-  const handleRegister = (e: { preventDefault: () => void; }) => {
+type FormValues = z.infer<typeof formSchema>
 
-      e.preventDefault();
+function Register() {
 
-      fetch("http://localhost:5000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const navigate = useNavigate();
+
+    if (localStorage.getItem("token") != null) {
+
+        navigate("/stuCourses");
+
+    }
+
+    const form = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            username: "",
+            email: "",
+            password: "",
+            group: ""
         },
-        body: JSON.stringify({ username , email , password , group }),
-      })
-        .then((res) => {
+    })
 
-          return res.json();
+    const onSubmit = (data: FormValues) => {
+        console.log("Form submitted with:", data);
+
+        fetch("http://localhost:5000/register" , {
+
+            method: "POST",
+            headers: {
+
+                "Content-Type": "application/json"
+
+            },
+            body: JSON.stringify({
+                username: data.username ,
+                email: data.email ,
+                password: data.password ,
+                group: data.group
+            })
 
         })
-        .then((data) => {
+            .then((res) => {
 
-          console.log(data);
+                return res.json();
 
-        })
-        .catch((err) => {
+            })
+            .then((data) => {
 
-          console.log(err);
+                console.log(data);
+                if (data) {
 
-        });
-        Swal.fire({
-          title: "Good job!",
-          text: "You clicked the button!",
-          icon: "success"
-        });
-  };
-       
-  return (
-    <Card className="w-[350px]">
-      <CardHeader>
-        <CardTitle>Register</CardTitle>
-        <CardDescription>Create a new account</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid w-full gap-7">
-          <div className="grid gap-2 items-start">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="John Doe"
-              value={username}
-              onChange={(e) => setUserName(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2 items-start">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2 items-start">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2 items-start">
-            <Label htmlFor="group">Group</Label>
-            <Input
-              id="group"
-              type="text"
-              placeholder="1....."
-              value={group}
-              onChange={(e) => setGroup(e.target.value)}
-            />
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button className="w-full" onClick={handleRegister} >
-          
-          Create Account
-          
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-};
+                    navigate("/login");
+
+                } else {
+
+                    navigate("/register");
+
+                }
+                
+            })
+            .catch((err) => {
+
+                console.log(err);
+
+            })
+
+    }
+
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 w-100">
+                <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Username</FormLabel>
+                            <FormControl>
+                                <Input placeholder="username" {...field} />
+                            </FormControl>
+                            <FormDescription>This is your username.</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                  )}
+                />
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                                <Input placeholder="email" {...field} />
+                            </FormControl>
+                            <FormDescription>This is your email.</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                  )}
+                />
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                                <Input type="password" placeholder="password" {...field} />
+                            </FormControl>
+                            <FormDescription>This is your password.</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                  )}
+                />
+                <FormField
+                    control={form.control}
+                    name="group"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Group</FormLabel>
+                            <FormControl>
+                                <Input type="number" placeholder="group" {...field} />
+                            </FormControl>
+                            <FormDescription>This is your group.</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                  )}
+                />
+                <Button type="submit">Sign Up</Button>
+                <p>If you already have an Account <Link to="/login" className="text-blue-600">Sign In</Link></p>
+            </form>
+        </Form>
+    )
+}
 
 export default Register;

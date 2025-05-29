@@ -1,5 +1,7 @@
 import Course from "@/components/course";
-import { useState , useEffect } from "react";
+import { AuthContext } from "@/context/AuthContext";
+import { useState , useEffect, useContext } from "react";
+import { Navigate } from "react-router-dom";
 
 export interface dataType {
 
@@ -14,6 +16,14 @@ export interface dataType {
 const StudentCourses = () => {
 
     const [ courses , setCourses ] = useState<dataType[]>([]);
+
+    const authContext = useContext(AuthContext);
+
+    if (!authContext) {
+        throw new Error("AuthContext is null — make sure <AuthProvider> wraps your app.");
+    }
+
+    const { token, loading } = authContext;
 
     useEffect(() => {
 
@@ -37,8 +47,17 @@ const StudentCourses = () => {
 
     } , []);
 
+    
+    if (loading) {
+        return null;
+    }
+
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
+
     return (
-      <div className="flex justify-around flex-wrap">
+      token && <div className="flex justify-around flex-wrap">
 
           {
 

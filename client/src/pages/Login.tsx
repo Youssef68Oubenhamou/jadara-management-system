@@ -3,139 +3,136 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-// Correct import: Form, FormControl, etc. are from your UI library, not react-hook-form directly.
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
-interface LoginProps {
-  setToken: (token: string) => void;
-}
+import { Button } from "@/components/ui/button"
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "@/context/AuthContext"
+import { useContext } from "react"
 
-// 1. Update the formSchema to include email and password
+
+// Update schema to match the fields being used
 const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(6, { // Common practice: password minimum length
-    message: "Password must be at least 6 characters.",
-  }),
-  // If you still want a username field (e.g., for registration, or if login accepts username):
-  // username: z.string().min(2, {
-  //   message: "Username must be at least 2 characters.",
-  // }).optional(), // Make it optional if not strictly needed for login
-});
+    email: z.string().email({ message: "Invalid email address." }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+})
 
-// Infer the type from the schema for better type safety
-type LoginFormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof formSchema>
 
-const Login = ({ setToken }: LoginProps) => {
-  const navigate = useNavigate();
+export function Login() {
 
-  // 2. Initialize useForm with the schema and resolver
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      // username: "", // Initialize if you keep it in the schema
-    },
-  });
+    // const [ credent , setCredent ] = useState<>([]);
+    const navigate = useNavigate();
 
-  // 3. Define the onSubmit function for react-hook-form
-  const onSubmit = async (values: LoginFormValues) => {
-    try {
-      const response = await fetch('http://localhost:5000/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: values.email, password: values.password }), // Use values from the form
-      });
+    const authContext = useContext(AuthContext);
 
-      const data = await response.json();
-
-      if (!response.ok) { // Check for non-2xx responses (e.g., 401, 400)
-        throw new Error(data.message || 'Login failed. Please check your credentials.');
-      }
-
-      setToken(data.accessToken);
-      localStorage.setItem('access-token', data.accessToken); // Consistent with your original code
-
-      if (data.userId) { // Assuming `data.status` indicates successful login for navigation
-        navigate('/users');
-      } else {
-        // Handle cases where status is false but no error was thrown (e.g., backend indicates specific non-error condition)
-        console.warn('Login status false, but no error:', data.message);
-        alert(data.message || 'Login failed unexpectedly.');
-      }
-
-    } catch (error: any) { // Catch network errors or errors thrown from fetch
-      console.error('Login error:', error.message);
-      alert(error.message); // Display error message to the user
+    if (!authContext) {
+        throw new Error("AuthContext is null — make sure <AuthProvider> wraps your app.");
     }
-  };
+
+    const { setToken , setUserType } = authContext;
+
+    if (localStorage.getItem("token") != null) {
+
+        navigate("/stuCourses");
+
+    }
+
+    const form = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    })
+
+    const onSubmit = (data: FormValues) => {
+        console.log("Form submitted with:", data)
+        // Perform login logic here
+
+        fetch("http://localhost:5000/login" , {
+
+            method: "POST",
+            headers: {
+
+                "Content-Type": "application/json"
+
+            },
+            body: JSON.stringify({ email: data.email , password: data.password })
+          
+        })
+            .then((res) => {
+
+                return res.json();
+
+            })
+            .then((credentials) => {
+
+                console.log(credentials.accessToken);
+
+                setToken(credentials.accessToken);
+                setUserType(credentials.roleName);
+                localStorage.setItem("token" , credentials.accessToken);
+                navigate("/stuCourses");
+
+            })
+            .catch((err) => {
+
+                console.log(err);
+                setToken(null);
+                localStorage.removeItem("token");
+
+            })
+
+    }
 
   return (
+    <>
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* Email Field */}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 w-100">
         <FormField
           control={form.control}
-          name="email" // Changed from username to email
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="you@example.com" {...field} type="email" />
+                <Input placeholder="email" {...field} />
               </FormControl>
-              <FormDescription>
-                Your registered email address.
-              </FormDescription>
+              <FormDescription>This is your email.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        {/* Password Field */}
         <FormField
           control={form.control}
-          name="password" // Added password field
+          name="password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="********" {...field} type="password" />
+                <Input type="password" placeholder="password" {...field} />
               </FormControl>
-              <FormDescription>
-                Your account password.
-              </FormDescription>
+              <FormDescription>This is your password.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        {/* If you wanted a username field for some reason, uncomment and adjust */}
-        {/* <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-
-        <Button type="submit">Login</Button> {/* Changed text to Login for clarity */}
+        <Button type="submit">Sign In</Button>
+        <p>If you don't have an Account Please <Link to="/register" className="text-blue-600">Sign Up</Link></p>
       </form>
     </Form>
-  );
-};
+  </>
+  )
+}
 
 export default Login;
