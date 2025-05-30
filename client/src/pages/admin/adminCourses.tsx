@@ -1,10 +1,19 @@
+"use client"
 import { useState , useEffect } from "react";
-import type {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
 
 import {
     Popover,
@@ -22,11 +31,10 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button";
-import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
 import { AuthContext } from "@/context/AuthContext";
 import { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 type Course = {
     _id: string;
@@ -36,6 +44,16 @@ type Course = {
     course_content: string;
     course_image: string;
 }
+
+const formSchema = z.object({
+    title: z.string().min(3 , { message: "Title must be at least 3 characters." }),
+    course_length: z.number({ message: "Invalid length , length should be number." }),
+    course_description: z.string({ message: "Description must be string not number." }),
+    course_content: z.string().max(1, { message: "Group must be at least 1 number" }),
+    course_image: z.string().max(1, { message: "Group must be at least 1 number" })
+})
+
+type FormValues = z.infer<typeof formSchema>
 
 const AdminCourses = () => {
 
@@ -47,13 +65,24 @@ const AdminCourses = () => {
     }
     const { token , loading } = authContext;
 
-    const [ title , setTitle ] = useState<string>("");
-    const [ courseLength , setCourseLength ] = useState<number>();
-    const [ courseDescription , setCourseDescription ] = useState<string>("");
-    const [ courseContent , setCourseContent ] = useState<string>("");
-    const [ courseImage , setCourseImage ] = useState<string>("");
+    const form = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            title: "",
+            course_length: 0,
+            course_description: "",
+            course_content: "",
+            course_image: "",
+        },
+    })
 
-    const [ courseData , setCourseData ] = useState<Course>(Object);
+    // const [ title , setTitle ] = useState<string>("");
+    // const [ courseLength , setCourseLength ] = useState<number>();
+    // const [ courseDescription , setCourseDescription ] = useState<string>("");
+    // const [ courseContent , setCourseContent ] = useState<string>("");
+    // const [ courseImage , setCourseImage ] = useState<string>("");
+
+    // const [ courseData , setCourseData ] = useState<Course>(Object);
 
     useEffect(() => {
 
@@ -77,17 +106,17 @@ const AdminCourses = () => {
 
     } , []);
 
-    const handleUpdate = async (id: string) => {
+    const handleUpdate = async (id: string , values: FormValues) => {
 
-        setCourseData(Object({
+        // setCourseData(Object({
 
-            title: title,
-            course_length: courseLength,
-            course_description: courseDescription,
-            course_content: courseContent,
-            course_image: courseImage
+        //     title: title,
+        //     course_length: courseLength,
+        //     course_description: courseDescription,
+        //     course_content: courseContent,
+        //     course_image: courseImage
 
-        }));
+        // }));
 
         fetch(`http://localhost:5000/course/update/${id}` , {
 
@@ -97,7 +126,7 @@ const AdminCourses = () => {
                 "Content-Type": "application/json"
 
             },
-            body: JSON.stringify(courseData)
+            body: JSON.stringify(values)
 
         })
             .then((response) => { 
@@ -154,68 +183,82 @@ const AdminCourses = () => {
                                 <PopoverTrigger asChild>
                                     <Button className="bg-green-500">Update</Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-150">
-                                    <div className="grid gap-4">
-                                        <div className="space-y-2">
-                                            <h4 className="font-medium leading-none">Course {course._id}</h4>
-                                            <p className="text-sm text-muted-foreground">
-                                                Set the Course Informations :
-                                            </p>
-                                        </div>
-                                        <div className="grid gap-2">
-                                            <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="width">Title</Label>
-                                            <Input
-                                                id="width"
-                                                defaultValue={course.title}
-                                                className="col-span-2 h-8"
-                                                type="text"
-                                                value={title}
-                                                onChange={(e) => setTitle(e.target.value)}
+                                <PopoverContent className="w-110">
+                                    <Form {...form}>
+                                        <form onSubmit={form.handleSubmit(() => handleUpdate(course._id))} className="space-y-5 w-100">
+                                            <Button type="submit">update course</Button>
+                                            <FormField
+                                                control={form.control}
+                                                name="title"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Title</FormLabel>
+                                                        <FormControl>
+                                                            <Input placeholder="title" {...field} />
+                                                        </FormControl>
+                                                        <FormDescription>This is course title.</FormDescription>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                            )}
                                             />
-                                            </div>
-                                            <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="maxWidth">Course_Length</Label>
-                                            <Input
-                                                id="maxWidth"
-                                                defaultValue={course.course_length}
-                                                className="col-span-2 h-8"
-                                                type="number"
-                                                value={courseLength}
-                                                onChange={(e) => setCourseLength(parseInt(e.target.value))}
+                                            <FormField
+                                                control={form.control}
+                                                name="course_length"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Length</FormLabel>
+                                                        <FormControl>
+                                                            <Input type="number" placeholder="length" {...field} />
+                                                        </FormControl>
+                                                        <FormDescription>This is course length.</FormDescription>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                            )}
                                             />
-                                            </div>
-                                            <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="height">Course_Description</Label>
-                                            <Input
-                                                id="height"
-                                                defaultValue={course.course_description}
-                                                className="col-span-2 h-8"
-                                                type="text"
-                                                value={courseDescription}
-                                                onChange={(e) => setCourseDescription(e.target.value)}
+                                            <FormField
+                                                control={form.control}
+                                                name="course_description"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Description</FormLabel>
+                                                        <FormControl>
+                                                            <Input type="text" placeholder="description" {...field} />
+                                                        </FormControl>
+                                                        <FormDescription>This is course description.</FormDescription>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                            )}
                                             />
-                                            </div>
-                                            <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="maxHeight">Course_Content</Label>
-                                            <Input
-                                                id="maxHeight"
-                                                defaultValue={course.course_content}
-                                                className="col-span-2 h-8"
-                                                type="text"
-                                                value={courseContent}
-                                                onChange={(e) => setCourseContent(e.target.value)}
+                                            <FormField
+                                                control={form.control}
+                                                name="course_content"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Content</FormLabel>
+                                                        <FormControl>
+                                                            <Input type="text" placeholder="content" {...field} />
+                                                        </FormControl>
+                                                        <FormDescription>This is course content.</FormDescription>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                            )}
                                             />
-                                            </div>
-                                            <div className="grid w-full max-w-sm items-center gap-1.5">
-                                                <Label htmlFor="picture">Course_Image</Label>
-                                                <Input id="picture" type="file" />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Button onClick={() => handleUpdate(course._id)}>update</Button>
-                                        </div>
-                                    </div>
+                                            <FormField
+                                                control={form.control}
+                                                name="course_image"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Image</FormLabel>
+                                                        <FormControl>
+                                                            <Input type="file" placeholder="select image" {...field} />
+                                                        </FormControl>
+                                                        <FormDescription>This is course image.</FormDescription>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                            )}
+                                            />
+                                        </form>
+                                    </Form>
                                 </PopoverContent>
                             </Popover>
                         </TableCell>

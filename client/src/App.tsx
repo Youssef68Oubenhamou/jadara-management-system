@@ -25,8 +25,6 @@ export default function App() {
 
     }
 
-    const { userType } = authContext;
-
     return (
         <BrowserRouter>
             <ThemeProvider defaultTheme="dark">
@@ -35,10 +33,10 @@ export default function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/logout" element={<Logout />} />
-                        <Route path="/stuCourses" element={userType == "admin" ? <AdminCourses /> : <StudentCourses />} />
+                        <Route path="/stuCourses" element={localStorage.getItem("user-type") == "admin" ? <AdminCourses /> : <StudentCourses />} />
                         <Route path="/student/:courseId" element={<Course title={''} length={0} description={''} content={''} image={''} />} />
-                        <Route path="/stuClass" element={userType == "admin" ? <AdminPage /> : <UserList/>} />
-                        <Route path="/stuEvents" element={userType == "admin" ? <Events /> : <Event />} />
+                        <Route path="/stuClass" element={localStorage.getItem("user-type") == "admin" ? <AdminPage /> : <UserList/>} />
+                        <Route path="/stuEvents" element={localStorage.getItem("user-type") == "admin" ? <Events /> : <Event />} />
                     </Routes>
                 </Layout>
             </ThemeProvider>

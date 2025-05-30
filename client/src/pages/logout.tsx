@@ -21,6 +21,7 @@ const Logout = () => {
         
         setToken(null);
         localStorage.removeItem("token");
+        localStorage.removeItem("user-type");
         navigate("/login");
 
     } , [])

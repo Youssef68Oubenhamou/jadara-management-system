@@ -72,17 +72,30 @@ export function Login() {
         })
             .then((res) => {
 
+              if (res.ok) {
+
                 return res.json();
+
+              }
 
             })
             .then((credentials) => {
 
                 console.log(credentials.accessToken);
 
-                setToken(credentials.accessToken);
-                setUserType(credentials.roleName);
-                localStorage.setItem("token" , credentials.accessToken);
-                navigate("/stuCourses");
+                if (credentials.accessToken) {
+
+                  setToken(credentials.accessToken);
+                  setUserType(credentials.roleName);
+                  localStorage.setItem("token" , credentials.accessToken);
+                  localStorage.setItem("user-type" , credentials.roleName)
+                  navigate("/stuCourses");
+
+                } else {
+
+                  console.log("The credentials are not correct !");
+
+                }
 
             })
             .catch((err) => {
