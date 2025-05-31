@@ -182,11 +182,7 @@ const AdminCourses = () => {
 
             })
 
-        values.title = "";
-        values.course_length = 0;
-        values.course_description = "";
-        values.course_content = "";
-        values.course_image = "";
+            form.reset();
 
     } 
 
@@ -233,11 +229,7 @@ const AdminCourses = () => {
 
             })
 
-        values.title = "";
-        values.course_length = 0;
-        values.course_description = "";
-        values.course_content = "";
-        values.course_image = "";
+            form.reset();
 
     }
 
