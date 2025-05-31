@@ -23,7 +23,7 @@ const Course: React.FC<courseProps> = ({ title , length , description , content 
 
         <Card className="h-60">
             <CardHeader>
-                <CardTitle>{ image }</CardTitle>
+                <CardTitle><img src={ image } alt="This is a course image..." /></CardTitle>
                 <CardDescription>Title: { title }</CardDescription>
             </CardHeader>
             <CardContent>

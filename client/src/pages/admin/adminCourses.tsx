@@ -47,10 +47,10 @@ type Course = {
 
 const formSchema = z.object({
     title: z.string().min(3 , { message: "Title must be at least 3 characters." }),
-    course_length: z.number({ message: "Invalid length , length should be number." }),
+    course_length: z.coerce.number(),
     course_description: z.string({ message: "Description must be string not number." }),
-    course_content: z.string().max(1, { message: "Group must be at least 1 number" }),
-    course_image: z.string().max(1, { message: "Group must be at least 1 number" })
+    course_content: z.string({ message: "Group must be at least 1 number" }),
+    course_image: z.string({ message: "Group must be at least 1 number" })
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -76,14 +76,6 @@ const AdminCourses = () => {
         },
     })
 
-    // const [ title , setTitle ] = useState<string>("");
-    // const [ courseLength , setCourseLength ] = useState<number>();
-    // const [ courseDescription , setCourseDescription ] = useState<string>("");
-    // const [ courseContent , setCourseContent ] = useState<string>("");
-    // const [ courseImage , setCourseImage ] = useState<string>("");
-
-    // const [ courseData , setCourseData ] = useState<Course>(Object);
-
     useEffect(() => {
 
         fetch("http://localhost:5000/course/get")
@@ -104,33 +96,49 @@ const AdminCourses = () => {
 
             })
 
-    } , []);
+    });
 
     const handleUpdate = async (id: string , values: FormValues) => {
 
-        // setCourseData(Object({
+        // console.log(e.target.files);
 
-        //     title: title,
-        //     course_length: courseLength,
-        //     course_description: courseDescription,
-        //     course_content: courseContent,
-        //     course_image: courseImage
+        // const data = new FileReader();
+        // data.addEventListener("load" , function () {
 
-        // }));
+        //     setPostData({ ...form , course_image: data.result })
+
+        // })
+        // data.readAsDataURL(e.target.files[0]);
+
+        const updatedCourse = {
+
+            _id: id,
+            title: values.title ,
+            course_length: values.course_length,
+            course_description: values.course_description,
+            course_content: values.course_content,
+            course_image: values.course_image
+
+        };
 
         fetch(`http://localhost:5000/course/update/${id}` , {
 
             method: "PUT",
             headers: {
                 
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
 
             },
-            body: JSON.stringify(values)
+            body: JSON.stringify(updatedCourse)
 
         })
             .then((response) => { 
+
+
+                console.log(response)
                 return response.json();
+
             })
             .then((data) => {
 
@@ -142,6 +150,12 @@ const AdminCourses = () => {
                 console.log(`An error occured when trying to update the user : ${err}`);
 
             })
+
+        values.title = "";
+        values.course_length = 0;
+        values.course_description = "";
+        values.course_content = "";
+        values.course_image = "";
 
     }
 
@@ -177,7 +191,7 @@ const AdminCourses = () => {
                         <TableCell>{course.course_length}</TableCell>
                         <TableCell>{course.course_description}</TableCell>
                         <TableCell className="text-right">{course.course_content}</TableCell>
-                        <TableCell className="text-right">{course.course_image}</TableCell>
+                        <TableCell className="text-right"><img src={course.course_image} alt="Course Image ..." /></TableCell>
                         <TableCell className="text-right">
                             <Popover>
                                 <PopoverTrigger asChild>
@@ -185,7 +199,7 @@ const AdminCourses = () => {
                                 </PopoverTrigger>
                                 <PopoverContent className="w-110">
                                     <Form {...form}>
-                                        <form onSubmit={form.handleSubmit(() => handleUpdate(course._id))} className="space-y-5 w-100">
+                                        <form onSubmit={form.handleSubmit((values) => handleUpdate(course._id , values))} className="space-y-5 w-100">
                                             <Button type="submit">update course</Button>
                                             <FormField
                                                 control={form.control}
@@ -250,7 +264,19 @@ const AdminCourses = () => {
                                                     <FormItem>
                                                         <FormLabel>Image</FormLabel>
                                                         <FormControl>
-                                                            <Input type="file" placeholder="select image" {...field} />
+                                                            <Input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                onChange={(e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (file) {
+                                                                    const reader = new FileReader();
+                                                                    reader.onloadend = () => {
+                                                                        form.setValue("course_image", reader.result as string);
+                                                                    };
+                                                                    reader.readAsDataURL(file);
+                                                                }
+                                                            }}/>
                                                         </FormControl>
                                                         <FormDescription>This is course image.</FormDescription>
                                                         <FormMessage />
