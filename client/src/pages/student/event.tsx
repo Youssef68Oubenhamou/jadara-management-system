@@ -33,8 +33,8 @@
 
 import { useEffect, useState } from "react";
 import EventStudent from "@/components/eventStudent";
-import { AuthContext } from "../../context/AuthContext";
 import EventCard from "@/components/EventCard";
+import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom"
 
@@ -97,7 +97,6 @@ export default function Event() {
             date={event.date_event}
             description={event.description_event}
             image={event.image}
-            location={event.location_event}
             key={index}
           />
         ))}
@@ -105,4 +104,3 @@ export default function Event() {
     </div>
   );
 }
-

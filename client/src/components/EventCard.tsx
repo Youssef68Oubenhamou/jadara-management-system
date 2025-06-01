@@ -1,14 +1,13 @@
-
+import React from "react";
 
 type EventCardProps = {
   title: string;
   date: string;
   description: string;
-  location: string;
   image: string
 };
 
-const EventCard = ({ title, date, description, image, location }: EventCardProps) => {
+const EventCard = ({ title, date, description, image }: EventCardProps) => {
   return (
     <div className="bg-yellow-100 text-black rounded-xl shadow-md p-4 w-full h-full flex flex-raw">
       <img
@@ -17,9 +16,8 @@ const EventCard = ({ title, date, description, image, location }: EventCardProps
       />
       <div className="flex flex-col">
         <div className=" w-100 flex flex-col items-center ml-14">
-            <h2 className="text-lg font-bold mb-2">🔖{title}</h2>
-            <p className="text-sm text-gray-600">📅{date}</p>
-            <p className="text-md text-gray-600">📍{location}</p>
+            <h2 className="text-lg font-bold mb-2">{title}</h2>
+            <p className="text-sm text-gray-600">{date}</p>
             <p className="text-sm mt-2">{description}</p>
         </div>
         <div className="w-full flex justify-center">
