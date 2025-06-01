@@ -20,7 +20,7 @@ type Event = {
   title_event: string
   description_event: string
   date_event: string
-  location_event?: string
+  location_event: string
   image: string
 }
 
