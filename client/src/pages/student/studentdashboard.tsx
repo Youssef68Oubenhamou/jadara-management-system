@@ -1,234 +1,218 @@
-// import { useEffect, useState } from "react"
-// import {
-//   Card,
-//   CardHeader,
-//   CardTitle,
-//   CardDescription,
-//   CardContent,
-// } from "@/components/ui/card"
-// import {
-//   Avatar,
-//   AvatarFallback,
-// } from "@/components/ui/avatar"
-
-// interface User {
-//   username: string
-//   email: string
-//   group: number
-// }
-
-// const StudentList: React.FC = () => {
-//   const [users, setUsers] = useState<User[]>([])
-
-//   useEffect(() => {
-//     // Replace this URL with your actual API endpoint
-//     fetch("http://localhost:5000//users")
-//       .then((res) => res.json())
-//       .then((data) => setUsers(data))
-//       .catch((error) => console.error("Failed to fetch users:", error))
-//   }, [])
-
-//   return (
-//     <Card>
-//       <CardHeader>
-//         <CardTitle>Team Members</CardTitle>
-//         <CardDescription>You made 265 sales this month.</CardDescription>
-//       </CardHeader>
-//       <CardContent className="space-y-4">
-//         {users.map((user, index) => (
-//           <div key={index} className="flex items-center justify-between">
-//             <div className="flex items-center gap-4">
-//               <Avatar>
-//                 <AvatarFallback>
-//                   {user.username
-//                     .split(" ")
-//                     .map((n) => n[0])
-//                     .join("")}
-//                 </AvatarFallback>
-//               </Avatar>
-//               <div>
-//                 <p className="text-sm font-medium">{user.username}</p>
-//                 <p className="text-xs text-muted-foreground">{user.email}</p>
-//               </div>
-//             </div>
-//             <p className="text-sm font-medium">Group {user.group}</p>
-//           </div>
-//         ))}
-//       </CardContent>
-//     </Card>
-//   )
-// }
-
-// export default StudentList
-
-// import { useEffect, useState } from "react"
-
-// interface User {
-//   username: string
-//   email: string
-//   group: number
-// }
-
-// const StudentList: React.FC = () => {
-//   const [users, setUsers] = useState<User[]>([])
-//   const [loading, setLoading] = useState(true)
-
-//   useEffect(() => {
-//     const fetchUsers = () => {
-//         const token = localStorage.getItem("token")
-        
-//         console.log(token);// or from context
-
-//         fetch("http://localhost:5000/users", {
-//             headers: {
-//                 Authorization: `Bearer ${token}`,
-//             },
-//         })
-//             .then((res) => {
-
-//                 return res.json();
-
-//             })
-//             .then((data) => {
-
-//                 setUsers(data);
-
-//             })
-//             .catch((err) => {
-
-//                 console.log(err);
-
-//             })
-//     }
-
-//     fetchUsers()
-//   }, [])
-
-//   if (loading) return <p>Loading...</p>
-
-//   return (
-//     <div>
-//       {users.map((user, index) => (
-//         <div key={index}>
-//           <h2>{user.username}</h2>
-//           <p>{user.email}</p>
-//           <p>Group: {user.group}</p>
-//         </div>
-//       ))}
-//     </div>
-//   )
-// }
-
-// export default StudentList
-
-
-import type React from "react"
+import React, { useContext, useEffect, useState } from "react";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/ui/card"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+} from "@/components/ui/card";
 import { AuthContext } from "../../context/AuthContext";
-import { useContext } from "react";
-import { Navigate } from "react-router-dom"
+import { Navigate } from "react-router-dom";
 
 interface User {
-  username: string
-  email: string
-  group: number
-  avatarUrl?: string // optional image
+  _id: string;
+  username: string;
+  email: string;
+  password: string;
+  group: number;
+  role_id: string;
 }
 
-const users: User[] = [
-  {
-    username: "Olivia Martin",
-    email: "olivia.martin@email.com",
-    group: 1,
-    avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=olivia",
-  },
-  {
-    username: "Jackson Lee",
-    email: "jackson.lee@email.com",
-    group: 2,
-    avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=jackson",
-  },
-  {
-    username: "Isabella Nguyen",
-    email: "isabella.nguyen@email.com",
-    group: 3,
-    avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=isabella",
-  },
-  {
-    username: "William Kim",
-    email: "will@email.com",
-    group: 2,
-    avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=will",
-  },
-  {
-    username: "Sofia Davis",
-    email: "sofia.davis@email.com",
-    group: 1,
-    avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=sofia",
-  },
-]
-
 const UserList: React.FC = () => {
-
   const authContext = useContext(AuthContext);
+  const [users, setUsers] = useState<User[]>([]);
 
   if (!authContext) {
-
-    console.log("An error Occured when wrapping the App component with the Provider !");
-
+    console.log("An error occurred when wrapping the App component with the Provider!");
   }
 
-  const { token , loading } = authContext;
+  const { token, loading } = authContext;
 
-  if (loading) {
-      return null;
-  }
+    useEffect(() => {
+      
+        fetch("http://localhost:5000/users" , {
 
-  if (!token) {
-      return <Navigate to="/login" replace />;
-  }
+            method: "GET",
+            mode: "cors",
+            headers: {
+
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+
+            },
+            credentials: "include"
+
+        })
+            .then((res) => {
+
+                if (!res.ok) {
+
+                  console.log("An error occured when trying to fetch !");
+                  
+                }
+                return res.json();
+
+            })
+            .then((info) => {
+
+                if (info.data) {
+
+                    setUsers(info.data);
+                    console.log(info.message);
+
+                }
+
+            })
+            .catch((err) => {
+
+                console.log("hello from the error phase !");
+                console.log(err);
+
+            })
+
+    } , [token]);
+
+    const studentGroup = localStorage.getItem("student-group");
+
+    console.log(studentGroup);
+
+    const filteredMates = users.filter((e) => {
+        return e.group == Number(studentGroup);
+    })
+
+    console.log(filteredMates);
+    
+
+  if (loading) return null;
+  if (!token) return <Navigate to="/login" replace />;
+  // if (error) return <p>{error}</p>;
 
   return (
-    <Card>
+    <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle>Team Members</CardTitle>
-        <CardDescription>You made 265 sales this month.</CardDescription>
+        <CardTitle>Classmates</CardTitle>
+        <CardDescription>
+          You have {filteredMates.length} classmates in your group
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {users.map((user, index) => (
+      <CardContent className="space-y-2">
+        {filteredMates && filteredMates.map((user, index) => (
           <div key={index} className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Avatar>
-                <AvatarImage src={user.avatarUrl} alt={user.username} />
-                <AvatarFallback>
-                  {user.username
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm font-medium">{user.username}</p>
-                <p className="text-xs text-muted-foreground">{user.email}</p>
-              </div>
+            <div>
+              <p className="text-sm font-medium">{user.username}</p>
+              <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
             <p className="text-sm font-medium">Group {user.group}</p>
           </div>
         ))}
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default UserList
+export default UserList;
+
+// import React, { useContext, useEffect, useState } from "react";
+// import {
+//   Card,
+//   CardHeader,
+//   CardTitle,
+//   CardDescription,
+//   CardContent,
+// } from "@/components/ui/card";
+// import { AuthContext } from "../../context/AuthContext";
+// import { Navigate } from "react-router-dom";
+
+// interface User {
+//   _id: string;
+//   username: string;
+//   email: string;
+//   password: string;
+//   group: number;
+//   role_id: string;
+// }
+
+// const UserList: React.FC = () => {
+//   const authContext = useContext(AuthContext);
+//   const [users, setUsers] = useState<User[]>([]);
+//   const [classmates, setClassmates] = useState<User[]>([]);
+
+//   if (!authContext) {
+//     console.log("An error occurred when wrapping the App component with the Provider!");
+//     return null;
+//   }
+
+//   const { token, loading, user } = authContext;
+//   console.log("Current user from context:", user);
+
+
+//   useEffect(() => {
+//     if (!token || !user) return;
+
+//     fetch("http://localhost:5000/users", {
+//       method: "GET",
+//       mode: "cors",
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         "Content-Type": "application/json",
+//       },
+//     })
+//       .then((res) => {
+//         if (!res.ok) {
+//           console.log("An error occurred when trying to fetch!");
+//         }
+//         return res.json();
+//       })
+//       .then((info) => {
+//         if (info.data) {
+//            console.log("✅ All users fetched from API:", info.data); 
+//           setUsers(info.data);
+
+//           const filteredClassmates = info.data.filter(
+//             (u: User) =>Number( u.group) === Number ( user.group) && u._id !== user._id
+//           );
+//           setClassmates(filteredClassmates);
+//           console.log("Fetched classmates:", filteredClassmates);
+//         }
+//       })
+//       .catch((err) => {
+//         console.log("hello from the error phase!");
+//         console.log(err);
+//       });
+//   }, [token, user]);
+
+//   if (loading) return null;
+//   if (!token) return <Navigate to="/login" replace />;
+
+//   return (
+//     <div className="w-full max-w-4xl mx-auto px-4">
+//       <Card className="w-full">
+//         <CardHeader>
+//           <CardTitle>Classmates</CardTitle>
+//           <CardDescription>
+//             You have {classmates.length} classmates in your group
+//           </CardDescription>
+//         </CardHeader>
+//         <CardContent className="space-y-2">
+//           {classmates.length > 0 ? (
+//             users.map((user, index) => (
+//               <div key={index} className="flex items-center justify-between">
+//                 <div>
+//                   <p className="text-sm font-medium">{user.username}</p>
+//                   <p className="text-xs text-muted-foreground">{user.email}</p>
+//                 </div>
+//                 <p className="text-sm font-medium">Group {user.group}</p>
+//               </div>
+//             ))
+//           ) : (
+//             <p className="text-sm text-gray-500">No classmates found in your group.</p>
+//           )}
+//         </CardContent>
+//       </Card>
+//     </div>
+//   );
+// };
+
+// export default UserList;
+
+

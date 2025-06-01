@@ -5,6 +5,8 @@ interface AuthContextType {
     setToken: React.Dispatch<React.SetStateAction<string | null>>;
     userType: string | null;
     setUserType: React.Dispatch<React.SetStateAction<string | null>>;
+    currentGroup: number | null;
+    setCurrentGroup: React.Dispatch<React.SetStateAction<number | null>>;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -16,6 +18,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     const [ token , setToken ] = useState<string | null>(null);
 
     const [ userType , setUserType ] = useState<string | null>(null);
+
+    const [ currentGroup , setCurrentGroup ] = useState<number | null>(null);
 
     const [ loading , setLoading ] = useState<boolean>(true);
 
@@ -29,7 +33,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
     return (
 
-        <AuthContext.Provider value={{ token , setToken , userType , setUserType , loading , setLoading }}>
+        <AuthContext.Provider value={{ token , setToken , userType , setUserType , currentGroup , setCurrentGroup , loading , setLoading }}>
 
             { children }
 

@@ -39,7 +39,7 @@ export function Login() {
         throw new Error("AuthContext is null — make sure <AuthProvider> wraps your app.");
     }
 
-    const { setToken , setUserType } = authContext;
+    const { setToken , setUserType , setCurrentGroup } = authContext;
 
     if (localStorage.getItem("token") != null) {
 
@@ -62,6 +62,7 @@ export function Login() {
         fetch("http://localhost:5000/login" , {
 
             method: "POST",
+            mode: "cors",
             headers: {
 
                 "Content-Type": "application/json"
@@ -82,6 +83,7 @@ export function Login() {
                 setToken(credentials.accessToken);
                 setUserType(credentials.roleName);
                 localStorage.setItem("token" , credentials.accessToken);
+                localStorage.setItem("student-group", credentials.group);
                 navigate("/stuCourses");
 
             })
