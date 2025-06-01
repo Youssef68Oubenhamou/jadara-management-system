@@ -125,7 +125,7 @@ export const login = asyncHandler( async (req , res) => {
 
                 const role = await Role.findById(getUser.role_id);
 
-                return res.status(200).json({accessToken: jwtToken , userId: getUser._id , roleName: role.role_name})
+                return res.status(200).json({accessToken: jwtToken , userId: getUser._id , roleName: role.role_name , group: getUser.group })
 
             }
 
