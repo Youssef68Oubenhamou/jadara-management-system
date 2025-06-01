@@ -57,17 +57,17 @@ const StudentCourses = () => {
     }
 
     return (
-      token && <div className="flex justify-around flex-wrap">
+        token && <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 
-          {
+            {
 
-              courses && courses.map((course) => {
+                courses && courses.map((course , index) => {
 
-                  return <Course title={course.title} length={course.course_length} description={course.course_description} content={course.course_content} image={course.course_image} />
+                    return <Course key={index} title={course.title} length={course.course_length} description={course.course_description} content={course.course_content} image={course.course_image} />
 
-              })
+                })
 
-          }
+            }
 
       </div>
     )

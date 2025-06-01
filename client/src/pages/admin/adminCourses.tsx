@@ -69,6 +69,7 @@ type FormValues = z.infer<typeof formSchema>
 const AdminCourses = () => {
 
     const [ courses , setCourses ] = useState<Course[]>([]);
+    const [ openPop , setOpenPop ] = useState<boolean>(false);
 
     const authContext = useContext(AuthContext);
     if (!authContext) {
@@ -363,100 +364,104 @@ const AdminCourses = () => {
                         <TableCell className="text-right">{course.course_content}</TableCell>
                         <TableCell className="text-right"><img src={course.course_image} alt="Course Image ..." /></TableCell>
                         <TableCell className="text-right">
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button className="bg-green-500">Update</Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-110">
-                                    <Form {...form}>
-                                        <form onSubmit={form.handleSubmit((values) => handleUpdate(course._id , values))} className="space-y-5 w-100">
-                                            <Button type="submit">update course</Button>
-                                            <FormField
-                                                control={form.control}
-                                                name="title"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Title</FormLabel>
-                                                        <FormControl>
-                                                            <Input placeholder="title" {...field} />
-                                                        </FormControl>
-                                                        <FormDescription>This is course title.</FormDescription>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                            )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name="course_length"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Length</FormLabel>
-                                                        <FormControl>
-                                                            <Input type="number" placeholder="length" {...field} />
-                                                        </FormControl>
-                                                        <FormDescription>This is course length.</FormDescription>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                            )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name="course_description"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Description</FormLabel>
-                                                        <FormControl>
-                                                            <Input type="text" placeholder="description" {...field} />
-                                                        </FormControl>
-                                                        <FormDescription>This is course description.</FormDescription>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                            )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name="course_content"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Content</FormLabel>
-                                                        <FormControl>
-                                                            <Input type="text" placeholder="content" {...field} />
-                                                        </FormControl>
-                                                        <FormDescription>This is course content.</FormDescription>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                            )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name="course_image"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Image</FormLabel>
-                                                        <FormControl>
-                                                            <Input
-                                                                type="file"
-                                                                accept="image/*"
-                                                                onChange={(e) => {
-                                                                const file = e.target.files?.[0];
-                                                                if (file) {
-                                                                    const reader = new FileReader();
-                                                                    reader.onloadend = () => {
-                                                                        form.setValue("course_image", reader.result as string);
-                                                                    };
-                                                                    reader.readAsDataURL(file);
-                                                                }
-                                                            }}/>
-                                                        </FormControl>
-                                                        <FormDescription>This is course image.</FormDescription>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                            )}
-                                            />
-                                        </form>
-                                    </Form>
-                                </PopoverContent>
-                            </Popover>
+                            <Dialog>
+                                <DialogTrigger asChild><Button className="bg-green-500">Update</Button></DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Update Course : {course._id}</DialogTitle>
+                                        <DialogDescription>
+                                            <Form {...form}>
+                                                <form onSubmit={form.handleSubmit((values) => handleUpdate(course._id , values))} className="space-y-5 w-100">
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="title"
+                                                        defaultValue={course.title}
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Title</FormLabel>
+                                                                <FormControl>
+                                                                    <Input placeholder="title" {...field} />
+                                                                </FormControl>
+                                                                <FormDescription>This is course title.</FormDescription>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                    )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="course_length"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Length</FormLabel>
+                                                                <FormControl>
+                                                                    <Input type="number" placeholder="length" {...field} />
+                                                                </FormControl>
+                                                                <FormDescription>This is course length.</FormDescription>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                    )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="course_description"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Description</FormLabel>
+                                                                <FormControl>
+                                                                    <Input type="text" placeholder="description" {...field} />
+                                                                </FormControl>
+                                                                <FormDescription>This is course description.</FormDescription>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                    )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="course_content"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Content</FormLabel>
+                                                                <FormControl>
+                                                                    <Input type="text" placeholder="content" {...field} />
+                                                                </FormControl>
+                                                                <FormDescription>This is course content.</FormDescription>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                    )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="course_image"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Image</FormLabel>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        type="file"
+                                                                        accept="image/*"
+                                                                        onChange={(e) => {
+                                                                        const file = e.target.files?.[0];
+                                                                        if (file) {
+                                                                            const reader = new FileReader();
+                                                                            reader.onloadend = () => {
+                                                                                form.setValue("course_image", reader.result as string);
+                                                                            };
+                                                                            reader.readAsDataURL(file);
+                                                                        }
+                                                                    }}/>
+                                                                </FormControl>
+                                                                <FormDescription>This is course image.</FormDescription>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                    )}
+                                                    />
+                                                    <Button type="submit" className="bg-green-500" >Update Course</Button>
+                                                </form>
+                                            </Form>
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                </DialogContent>
+                            </Dialog>
                         </TableCell>
                         <TableCell className="text-right"><Button className="bg-red-500" onClick={() => handleDelete(course._id)} >Delete</Button></TableCell>
                     </TableRow>

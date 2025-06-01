@@ -54,7 +54,8 @@ const port = process.env.PORT || 5000; // Fallback in case PORT is not set
 const db = process.env.MONGODB_URI;
 
 // Middleware setup
-app.use(bodyParser.json({ extended: true }));
+// app.use(bodyParser.json({ extended: true }));
+app.use(bodyParser.json({limit: '100mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
