@@ -61,6 +61,7 @@ type Event = {
   title_event: string
   description_event: string
   date_event: string
+  location_event: string
   image: string
 }
 
@@ -74,12 +75,14 @@ const EventAdmin = ({ events, orientation = "vertical" }: Props) => {
     <div className="w-full max-w-4xl mx-auto">
       <Carousel orientation={orientation}>
         <CarouselContent>
-          {events.map((event) => (
+          {events.map((event,index) => (
               <CarouselItem key={event._id} className="p-4">
                 <EventCardAdmin
+                  key={index}
                   title={event.title_event}
                   description={event.description_event}
                   date={event.date_event}
+                  location={event.location_event}
                   image={event.image}
                 />
               </CarouselItem>

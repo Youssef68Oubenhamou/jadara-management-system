@@ -39,7 +39,7 @@ export function Login() {
         throw new Error("AuthContext is null — make sure <AuthProvider> wraps your app.");
     }
 
-    const { setToken , setUserType , setCurrentGroup } = authContext;
+    const { setToken , setUserType } = authContext;
 
     if (localStorage.getItem("token") != null) {
 
@@ -57,12 +57,10 @@ export function Login() {
 
     const onSubmit = (data: FormValues) => {
         console.log("Form submitted with:", data)
-        // Perform login logic here
 
         fetch("http://localhost:5000/login" , {
 
             method: "POST",
-            mode: "cors",
             headers: {
 
                 "Content-Type": "application/json"
@@ -73,18 +71,30 @@ export function Login() {
         })
             .then((res) => {
 
+              if (res.ok) {
+
                 return res.json();
+
+              }
 
             })
             .then((credentials) => {
 
                 console.log(credentials.accessToken);
 
-                setToken(credentials.accessToken);
-                setUserType(credentials.roleName);
-                localStorage.setItem("token" , credentials.accessToken);
-                localStorage.setItem("student-group", credentials.group);
-                navigate("/stuCourses");
+                if (credentials.accessToken) {
+
+                  setToken(credentials.accessToken);
+                  setUserType(credentials.roleName);
+                  localStorage.setItem("token" , credentials.accessToken);
+                  localStorage.setItem("user-type" , credentials.roleName)
+                  navigate("/stuCourses");
+
+                } else {
+
+                  console.log("The credentials are not correct !");
+
+                }
 
             })
             .catch((err) => {
@@ -98,42 +108,42 @@ export function Login() {
     }
 
   return (
-    <>
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 w-100">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="email" {...field} />
-              </FormControl>
-              <FormDescription>This is your email.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="password" {...field} />
-              </FormControl>
-              <FormDescription>This is your password.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Sign In</Button>
-        <p>If you don't have an Account Please <Link to="/register" className="text-blue-600">Sign Up</Link></p>
-      </form>
-    </Form>
-  </>
+    <div className="flex items-center justify-center min-h-[70vh]" >
+      <Form {...form} >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 w-100">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="email" {...field} />
+                </FormControl>
+                <FormDescription>This is your email.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="password" {...field} />
+                </FormControl>
+                <FormDescription>This is your password.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Sign In</Button>
+          <p>If you don't have an Account Please <Link to="/register" className="text-blue-600">Sign Up</Link></p>
+        </form>
+      </Form>
+    </div>
   )
 }
 

@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     } , [])
 
     return (
-
         <AuthContext.Provider value={{ token , setToken , userType , setUserType , currentGroup , setCurrentGroup , loading , setLoading }}>
 
             { children }

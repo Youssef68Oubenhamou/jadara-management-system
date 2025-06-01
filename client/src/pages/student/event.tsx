@@ -47,6 +47,15 @@ type EventType = {
   image: string;
 };
 
+const formatDate = (isoDate: string) => {
+  const date = new Date(isoDate);
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
 export default function Event() {
   const [events, setEvents] = useState<EventType[]>([]);
 
@@ -87,15 +96,16 @@ export default function Event() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-blue-100 rounded-xl shadow-md flex flex-col">
+    <div className=" mx-auto p-6 bg-blue-100 rounded-xl shadow-md flex flex-col h-100">
       <h1 className="text-2xl font-bold mb-4 text-center">📅 Upcoming events</h1>
 
       <EventStudent size="lg">
         { events && events.map((event, index ) => (
           <EventCard
             title={event.title_event}
-            date={event.date_event}
+            date={formatDate(event.date_event)}
             description={event.description_event}
+            location={event.location_event}
             image={event.image}
             key={index}
           />
@@ -104,4 +114,3 @@ export default function Event() {
     </div>
   );
 }
-
