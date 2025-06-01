@@ -1,10 +1,19 @@
+"use client"
 import { useState , useEffect } from "react";
-import type {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
 
 import {
     Popover,
@@ -22,11 +31,21 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button";
-import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
 import { AuthContext } from "@/context/AuthContext";
 import { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Label } from "recharts";
 
 type Course = {
     _id: string;
@@ -37,9 +56,20 @@ type Course = {
     course_image: string;
 }
 
+const formSchema = z.object({
+    title: z.string().min(3 , { message: "Title must be at least 3 characters." }),
+    course_length: z.coerce.number(),
+    course_description: z.string({ message: "Description must be string not number." }),
+    course_content: z.string({ message: "Enter a valid content." }),
+    course_image: z.string({ message: "Select a proper image." })
+})
+
+type FormValues = z.infer<typeof formSchema>
+
 const AdminCourses = () => {
 
     const [ courses , setCourses ] = useState<Course[]>([]);
+    const [ openPop , setOpenPop ] = useState<boolean>(false);
 
     const authContext = useContext(AuthContext);
     if (!authContext) {
@@ -47,13 +77,16 @@ const AdminCourses = () => {
     }
     const { token , loading } = authContext;
 
-    const [ title , setTitle ] = useState<string>("");
-    const [ courseLength , setCourseLength ] = useState<number>();
-    const [ courseDescription , setCourseDescription ] = useState<string>("");
-    const [ courseContent , setCourseContent ] = useState<string>("");
-    const [ courseImage , setCourseImage ] = useState<string>("");
-
-    const [ courseData , setCourseData ] = useState<Course>(Object);
+    const form = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            title: "",
+            course_length: 0,
+            course_description: "",
+            course_content: "",
+            course_image: "",
+        },
+    })
 
     useEffect(() => {
 
@@ -75,33 +108,69 @@ const AdminCourses = () => {
 
             })
 
-    } , []);
+    });
 
-    const handleUpdate = async (id: string) => {
+    const handleDelete = async (id: string) => {
 
-        setCourseData(Object({
+        fetch(`http://localhost:5000/course/remove/${id}` , {
 
-            title: title,
-            course_length: courseLength,
-            course_description: courseDescription,
-            course_content: courseContent,
-            course_image: courseImage
+            method: "DELETE",
+            headers: {
 
-        }));
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
 
-        fetch(`http://localhost:5000/course/update/${id}` , {
+            }
 
-            method: "PUT",
+        })
+            .then((res) => {
+
+                return res.json();
+
+            })
+            .then((infos) => {
+
+                console.log(infos);
+
+            })
+            .catch((err) => {
+
+                console.log(err);
+
+            })
+
+    }
+
+    const handleAdd = async (values: FormValues) => {
+
+        const courseRecord = {
+
+            title: values.title ,
+            course_length: values.course_length,
+            course_description: values.course_description,
+            course_content: values.course_content,
+            course_image: values.course_image            
+
+        }
+
+        fetch("http://localhost:5000/course/create" , {
+
+            method: "POST",
             headers: {
                 
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
 
             },
-            body: JSON.stringify(courseData)
+            body: JSON.stringify(courseRecord)
 
         })
             .then((response) => { 
+
+
+                console.log(response);
                 return response.json();
+
             })
             .then((data) => {
 
@@ -113,6 +182,55 @@ const AdminCourses = () => {
                 console.log(`An error occured when trying to update the user : ${err}`);
 
             })
+
+            form.reset();
+
+    } 
+
+    const handleUpdate = async (id: string , values: FormValues) => {
+
+        const updatedCourse = {
+
+            _id: id,
+            title: values.title ,
+            course_length: values.course_length,
+            course_description: values.course_description,
+            course_content: values.course_content,
+            course_image: values.course_image
+
+        };
+
+        fetch(`http://localhost:5000/course/update/${id}` , {
+
+            method: "PUT",
+            headers: {
+                
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+
+            },
+            body: JSON.stringify(updatedCourse)
+
+        })
+            .then((response) => { 
+
+
+                console.log(response)
+                return response.json();
+
+            })
+            .then((data) => {
+
+                console.log(data);
+
+            })
+            .catch((err) => {
+
+                console.log(`An error occured when trying to update the user : ${err}`);
+
+            })
+
+            form.reset();
 
     }
 
@@ -126,7 +244,103 @@ const AdminCourses = () => {
 
     return (
         <div>
-            
+            <Dialog>
+                <DialogTrigger asChild><Button variant="outline">+ Add Course</Button></DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                    <DialogTitle>Create a course :</DialogTitle>
+                    <DialogDescription>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(handleAdd)} className="space-y-5 w-100">
+                                <FormField
+                                    control={form.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Title</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="title" {...field} />
+                                            </FormControl>
+                                            <FormDescription>This is course title.</FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="course_length"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Length</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="length" {...field} />
+                                            </FormControl>
+                                            <FormDescription>This is course length.</FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="course_description"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Description</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" placeholder="description" {...field} />
+                                            </FormControl>
+                                            <FormDescription>This is course description.</FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="course_content"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Content</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" placeholder="content" {...field} />
+                                            </FormControl>
+                                            <FormDescription>This is course content.</FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="course_image"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Image</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        const reader = new FileReader();
+                                                        reader.onloadend = () => {
+                                                            form.setValue("course_image", reader.result as string);
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                    }
+                                                }}/>
+                                            </FormControl>
+                                            <FormDescription>This is course image.</FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                )}
+                                />
+                                <Button type="submit">Add Course</Button>
+                            </form>
+                        </Form>
+                    </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
             <Table>
                 <TableCaption>A list of recent Courses.</TableCaption>
                 <TableHeader>
@@ -148,78 +362,108 @@ const AdminCourses = () => {
                         <TableCell>{course.course_length}</TableCell>
                         <TableCell>{course.course_description}</TableCell>
                         <TableCell className="text-right">{course.course_content}</TableCell>
-                        <TableCell className="text-right">{course.course_image}</TableCell>
+                        <TableCell className="text-right"><img src={course.course_image} alt="Course Image ..." /></TableCell>
                         <TableCell className="text-right">
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button className="bg-green-500">Update</Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-150">
-                                    <div className="grid gap-4">
-                                        <div className="space-y-2">
-                                            <h4 className="font-medium leading-none">Course {course._id}</h4>
-                                            <p className="text-sm text-muted-foreground">
-                                                Set the Course Informations :
-                                            </p>
-                                        </div>
-                                        <div className="grid gap-2">
-                                            <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="width">Title</Label>
-                                            <Input
-                                                id="width"
-                                                defaultValue={course.title}
-                                                className="col-span-2 h-8"
-                                                type="text"
-                                                value={title}
-                                                onChange={(e) => setTitle(e.target.value)}
-                                            />
-                                            </div>
-                                            <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="maxWidth">Course_Length</Label>
-                                            <Input
-                                                id="maxWidth"
-                                                defaultValue={course.course_length}
-                                                className="col-span-2 h-8"
-                                                type="number"
-                                                value={courseLength}
-                                                onChange={(e) => setCourseLength(parseInt(e.target.value))}
-                                            />
-                                            </div>
-                                            <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="height">Course_Description</Label>
-                                            <Input
-                                                id="height"
-                                                defaultValue={course.course_description}
-                                                className="col-span-2 h-8"
-                                                type="text"
-                                                value={courseDescription}
-                                                onChange={(e) => setCourseDescription(e.target.value)}
-                                            />
-                                            </div>
-                                            <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="maxHeight">Course_Content</Label>
-                                            <Input
-                                                id="maxHeight"
-                                                defaultValue={course.course_content}
-                                                className="col-span-2 h-8"
-                                                type="text"
-                                                value={courseContent}
-                                                onChange={(e) => setCourseContent(e.target.value)}
-                                            />
-                                            </div>
-                                            <div className="grid w-full max-w-sm items-center gap-1.5">
-                                                <Label htmlFor="picture">Course_Image</Label>
-                                                <Input id="picture" type="file" />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Button onClick={() => handleUpdate(course._id)}>update</Button>
-                                        </div>
-                                    </div>
-                                </PopoverContent>
-                            </Popover>
+                            <Dialog>
+                                <DialogTrigger asChild><Button className="bg-green-500">Update</Button></DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Update Course : {course._id}</DialogTitle>
+                                        <DialogDescription>
+                                            <Form {...form}>
+                                                <form onSubmit={form.handleSubmit((values) => handleUpdate(course._id , values))} className="space-y-5 w-100">
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="title"
+                                                        defaultValue={course.title}
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Title</FormLabel>
+                                                                <FormControl>
+                                                                    <Input placeholder="title" {...field} />
+                                                                </FormControl>
+                                                                <FormDescription>This is course title.</FormDescription>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                    )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="course_length"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Length</FormLabel>
+                                                                <FormControl>
+                                                                    <Input type="number" placeholder="length" {...field} />
+                                                                </FormControl>
+                                                                <FormDescription>This is course length.</FormDescription>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                    )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="course_description"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Description</FormLabel>
+                                                                <FormControl>
+                                                                    <Input type="text" placeholder="description" {...field} />
+                                                                </FormControl>
+                                                                <FormDescription>This is course description.</FormDescription>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                    )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="course_content"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Content</FormLabel>
+                                                                <FormControl>
+                                                                    <Input type="text" placeholder="content" {...field} />
+                                                                </FormControl>
+                                                                <FormDescription>This is course content.</FormDescription>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                    )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="course_image"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Image</FormLabel>
+                                                                <FormControl>
+                                                                    <Input
+                                                                        type="file"
+                                                                        accept="image/*"
+                                                                        onChange={(e) => {
+                                                                        const file = e.target.files?.[0];
+                                                                        if (file) {
+                                                                            const reader = new FileReader();
+                                                                            reader.onloadend = () => {
+                                                                                form.setValue("course_image", reader.result as string);
+                                                                            };
+                                                                            reader.readAsDataURL(file);
+                                                                        }
+                                                                    }}/>
+                                                                </FormControl>
+                                                                <FormDescription>This is course image.</FormDescription>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                    )}
+                                                    />
+                                                    <Button type="submit" className="bg-green-500" >Update Course</Button>
+                                                </form>
+                                            </Form>
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                </DialogContent>
+                            </Dialog>
                         </TableCell>
-                        <TableCell className="text-right"><Button className="bg-red-500">Delete</Button></TableCell>
+                        <TableCell className="text-right"><Button className="bg-red-500" onClick={() => handleDelete(course._id)} >Delete</Button></TableCell>
                     </TableRow>
                     ))}
                 </TableBody>

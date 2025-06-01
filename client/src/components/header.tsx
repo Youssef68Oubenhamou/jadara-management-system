@@ -10,15 +10,15 @@ const Header = () => {
 
     const isDark = theme === "dark";
 
-    const authContext = useContext(AuthContext);
+    // const authContext = useContext(AuthContext);
 
-    if (!authContext) {
+    // if (!authContext) {
 
-        console.log("An error occured in the context , please wrap your App component with the Provider !");
+    //     console.log("An error occured in the context , please wrap your App component with the Provider !");
 
-    }
+    // }
 
-    const { userType } = authContext;
+    // const { userType } = authContext;
 
     return (
         <header className="fixed h-24 w-full top-0 z-50 border-b bg-background/95 backdrop-blur py-2 supports-[backdrop-filter]:bg-background/60" >
@@ -26,7 +26,7 @@ const Header = () => {
                 <Link to="/" >
                     <img src="/logo-jadara.png" alt="Rock Logo" className="h-10" />
                 </Link>
-                { localStorage.getItem("token") && <h1>You are {userType}</h1> }
+                { localStorage.getItem("token") && <h1>You are {localStorage.getItem("user-type")}</h1> }
 
                 <div onClick={() => setTheme(isDark? "light" : "dark")} 
                     className={`flex items-center cursor-pointer transition-transform duration-500 ${ isDark ? "rotate-180" : "rotate-0" }`}
