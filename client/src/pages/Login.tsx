@@ -87,7 +87,8 @@ export function Login() {
                   setToken(credentials.accessToken);
                   setUserType(credentials.roleName);
                   localStorage.setItem("token" , credentials.accessToken);
-                  localStorage.setItem("user-type" , credentials.roleName)
+                  localStorage.setItem("student-group" , credentials.group);
+                  localStorage.setItem("user-type" , credentials.roleName);
                   navigate("/stuCourses");
 
                 } else {

@@ -88,7 +88,7 @@ const UserList: React.FC = () => {
   // if (error) return <p>{error}</p>;
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full h-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle>Classmates</CardTitle>
         <CardDescription>
