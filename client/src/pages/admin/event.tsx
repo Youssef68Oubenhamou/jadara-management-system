@@ -1,20 +1,36 @@
+
+
 import { useEffect, useState, useContext } from "react" 
 import EventCardAdmin from "@/components/EventCardAdmin"
 import VerticalCarousel from "@/components/VerticalCarousel"
 import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
+  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription
 } from "@/components/ui/dialog"
+import {
+  Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,
+} from "@/components/ui/form"
+import {
+  Popover, PopoverContent, PopoverTrigger,
+} from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { AuthContext } from "../../context/AuthContext"
 import { Navigate } from "react-router-dom"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+
+const formSchema = z.object({
+  title_event: z.string(),
+  description_event: z.string(),
+  date_event: z.string(),
+  location_event: z.string(),
+  image: z.string(),
+})
+
+type FormValues = z.infer<typeof formSchema>
 
 type Event = {
   _id: string
@@ -25,7 +41,6 @@ type Event = {
   image: string
 }
 
-
 const formatDate = (isoDate: string) => {
   const date = new Date(isoDate);
   return date.toLocaleDateString("en-GB", {
@@ -35,10 +50,9 @@ const formatDate = (isoDate: string) => {
   });
 };
 
-
 const EventPageAdmin = () => {
   const [events, setEvents] = useState<Event[]>([])
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState<FormValues>({
     title_event: "",
     description_event: "",
     date_event: "",
@@ -46,22 +60,14 @@ const EventPageAdmin = () => {
     image: "",
   })
 
-
   const authContext = useContext(AuthContext)
+  if (!authContext) return null
+  const { token, loading } = authContext
 
-  if (!authContext) {
-    console.log("An error occurred when wrapping the App component with the Provider!")
-  }
-
-  const { token, loading } = authContext;
-
-  const [ titleEvent , setTitleEvent ] = useState<string>("");
-  const [ eventDescription , setEventDescription ] = useState<string>("");
-  const [ eventDate , setEvenyDate ] = useState<string>("");
-  const [ eventLocation , setEventLocation ] = useState<string>("");
-  const [ image , setImage ] = useState<string>("");
-
-  const [ eventData , setEventData ] = useState<Event>(Object);
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: formData,
+  })
 
   useEffect(() => {
     fetchEvents()
@@ -87,245 +93,172 @@ const EventPageAdmin = () => {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-const handleAddEvent = async () => {
-  console.log("Submitting form:", form)
+  const handleAddEvent = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/event/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      })
 
-    fetch("http://localhost:5000/event/create", {
-      method: "POST",
-      mode: 'no-cors',
+      const newEvent = await res.json()
+      setEvents([...events, newEvent])
+      setFormData({ title_event: "", description_event: "", date_event: "", location_event: "", image: "" })
+    } catch (err) {
+      console.error("Error adding event:", err)
+    }
+  }
+
+  const handleUpdate = (id: string, values: FormValues) => {
+    const updatedEvent = { _id: id, ...values }
+
+    fetch(`http://localhost:5000/event/update/${id}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`,
+        "Authorization": `Bearer ${token}`,
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify(updatedEvent),
     })
-      .then((res) => {
-
-        return res.json();
-
-      })
+      .then((response) => response.json())
       .then((data) => {
-
-        console.log(data);
-        const newEvent = data;
-        setEvents((preEvents) => [
-        ...preEvents,
-        {
-          _id: newEvent._id,
-          title_event: form.title_event,
-          description_event: form.description_event,
-          date_event: form.date_event,
-          location_event: form.location_event,
-          image: form.image
-        },
-        ])
-
-        setForm({
-          title_event: "",
-          description_event: "",
-          date_event: "",
-          location_event: "",
-          image: "",
-        })
-
+        console.log(data)
+        fetchEvents()
       })
       .catch((err) => {
-
-        console.log(err);
-
+        console.error("Error updating event:", err)
       })
 
-    // const newEvent = await res.json()
-
-}
-
-  
-
-const handleDelete = async (id: string) => {
-  try {
-    console.log("Deleting event:", id)
-    const res = await fetch(`http://localhost:5000/event/remove/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) throw new Error("Failed to delete event");
-
-    fetchEvents();
-  } catch (err) {
-    console.error(err)
+    form.reset()
   }
-}
 
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await fetch(`http://localhost:5000/event/remove/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`,
+        },
+      })
 
+      if (!res.ok) throw new Error("Failed to delete event")
 
-
-const handleUpdate = (id: string) => {
-  
-  
-  const updatedEvent = {
-
-              _id: id,
-              title_event: titleEvent,
-              description_event: eventDescription,
-              date_event: eventDate,
-              location_event: eventLocation,
-              image: image
-
-        };
-        
-        fetch(`http://localhost:5000/event/update/${id}` , {
-
-            method: "PUT",
-            headers: {
-                
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-
-            },
-            body: JSON.stringify(updatedEvent)
-
-        })
-            .then((response) => { 
-
-
-                console.log(response)
-                return response.json();
-
-            })
-            .then((data) => {
-
-                console.log(data);
-
-            })
-            .catch((err) => {
-
-              console.log(`An error occured when trying to update the event: ${err}`);
-
-            })
-
+      fetchEvents()
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   if (loading) return null
-  
   if (!token) return <Navigate to="/login" replace />
 
   return (
     <div className="p-5">
       <div className="flex justify-between items-center mb-9">
         <h1 className="text-2xl font-bold text-center ml-10">📊 Events Dashboard</h1>
-
         <Dialog>
           <DialogTrigger asChild>
             <Button className="bg-lime-500 text-white font-semibold hover:bg-lime-600 rounded-md shadow-md ml-100">
               Add Event
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-gradient-to-br from-yellow-100 via-blue to-yellow-100">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Create New Event</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="title_event">Title</Label>
-                <Input
-                  id="title_event"
-                  name="title_event"
-                  value={form.title_event}
-                  onChange={handleInputChange}
-                  placeholder="Event title"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="date_event">Date</Label>
-                <Input
-                  id="date_event"
-                  type="date"
-                  name="date_event"
-                  value={form.date_event}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="title_event">Location</Label>
-                <Input
-                  id="location_event"
-                  name="location_event"
-                  value={form.location_event}
-                  onChange={handleInputChange}
-                  placeholder="Event location"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="image">Image URL or path</Label>
-                <Input
-                     type="file"  
-                     accept="image/*"
-                     onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setForm((prevForm) => ({
-                            ...prevForm,
-                            image: reader.result as string,
-                          }));
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="description_event">Description</Label>
-                <Textarea
-                  id="description_event"
-                  name="description_event"
-                  value={form.description_event}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <Button
-                type="button"
-                className="bg-lime-500 text-white font-semibold hover:bg-lime-600 rounded-md shadow-md"
-                onClick={handleAddEvent}
-              >
-                Submit
-              </Button>
+              <Label>Title</Label>
+              <Input name="title_event" value={formData.title_event} onChange={handleInputChange} />
+              <Label>Date</Label>
+              <Input name="date_event" type="date" value={formData.date_event} onChange={handleInputChange} />
+              <Label>Location</Label>
+              <Input name="location_event" value={formData.location_event} onChange={handleInputChange} />
+              <Label>Image</Label>
+              <Input type="file" accept="image/*" onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) {
+                  const reader = new FileReader()
+                  reader.onloadend = () => {
+                    setFormData({ ...formData, image: reader.result as string })
+                  }
+                  reader.readAsDataURL(file)
+                }
+              }} />
+              <Label>Description</Label>
+              <Textarea name="description_event" value={formData.description_event} onChange={handleInputChange} />
+              <Button onClick={handleAddEvent}>Submit</Button>
             </div>
           </DialogContent>
-          <DialogDescription>
-          </DialogDescription>
         </Dialog>
       </div>
 
       <VerticalCarousel size="lg">
         {events.map((event) => (
-          <EventCardAdmin
-            key={event._id}
-            title={event.title_event}
-            description={event.description_event}
-            date={formatDate(event.date_event)}
-            location={event.location_event}
-            image={event.image}
-          >
-            <button
-              onClick={() => handleUpdate(event._id)}
-              className="h-8 w-16 bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 shadow-md"
-            >
-              Update
-            </button>
-            <button
-              onClick={() => handleDelete(event._id)}
-              className="h-8 w-16 bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 shadow-md"
-            >
-              Delete
-            </button>
+          <EventCardAdmin key={event._id} title={event.title_event} description={event.description_event} date={formatDate(event.date_event)}location={event.location_event} image={event.image}>
+            <button onClick={() => handleDelete(event._id)} className="h-8 w-16 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  className="bg-green-500"
+                  onClick={() => {
+                    form.setValue("title_event", event.title_event)
+                    form.setValue("description_event", event.description_event)
+                    form.setValue("date_event", event.date_event)
+                    form.setValue("location_event", event.location_event)
+                    form.setValue("image", event.image)
+                  }}
+                >Update</Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit((values) => handleUpdate(event._id, values))} className="space-y-5">
+                    <FormField name="title_event" control={form.control} render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl><Input {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField name="description_event" control={form.control} render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl><Textarea {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField name="date_event" control={form.control} render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Date</FormLabel>
+                        <FormControl><Input type="date" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField name="location_event" control={form.control} render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Location</FormLabel>
+                        <FormControl><Input {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField name="image" control={form.control} render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Image</FormLabel>
+                        <FormControl><Input {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <Button type="submit">Update Event</Button>
+                  </form>
+                </Form>
+              </PopoverContent>
+            </Popover>
           </EventCardAdmin>
         ))}
       </VerticalCarousel>
@@ -333,8 +266,7 @@ const handleUpdate = (id: string) => {
   )
 }
 
-export default EventPageAdmin;
-
+export default EventPageAdmin
 
 
 
