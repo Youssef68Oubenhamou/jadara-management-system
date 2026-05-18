@@ -3,6 +3,7 @@ import { useTheme } from "@/context/context-provider";
 import { Moon, Sun } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
+import { Button } from "./ui/button";
 
 const Header = () => {
 
@@ -27,7 +28,7 @@ const Header = () => {
                     <img src="/logo-jadara.png" alt="Rock Logo" className="h-10" />
                 </Link>
                 { localStorage.getItem("token") && <h1>You are {localStorage.getItem("user-type")}</h1> }
-
+                {!localStorage.getItem("token") && <div className="flex flex-row items-center justify-between space-around w-50 p-4 absolute right-[15vh]"><Link to="login" className="hover:text-sky-700">sign in</Link><Link to="register"><Button className="w-25 h-10 cursor-pointer">sign up</Button></Link></div>}
                 <div onClick={() => setTheme(isDark? "light" : "dark")} 
                     className={`flex items-center cursor-pointer transition-transform duration-500 ${ isDark ? "rotate-180" : "rotate-0" }`}
                     >

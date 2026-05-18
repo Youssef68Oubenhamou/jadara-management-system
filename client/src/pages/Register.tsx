@@ -3,7 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -14,17 +15,17 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import { Card , CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Link, useNavigate } from "react-router-dom"
-import { AuthContext } from "@/context/AuthContext"
-import { useContext } from "react";
+import { ArrowLeft } from "lucide-react";
 
 // Update schema to match the fields being used
 const formSchema = z.object({
     username: z.string().min(4 , { message: "Username must be at least 4 characters." }),
     email: z.string().email({ message: "Invalid email address." }),
     password: z.string().min(6, { message: "Password must be at least 6 characters." }),
-    group: z.string().max(1, { message: "Group must be at least 1 number" })
+    group: z.coerce.number().min(1, {message: "Group is required"})
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -45,7 +46,7 @@ function Register() {
             username: "",
             email: "",
             password: "",
-            group: ""
+            group: 0
         },
     })
 
@@ -70,14 +71,21 @@ function Register() {
         })
             .then((res) => {
 
+                if (res.status == 403) {
+
+                    toast.error("This User is already exist , Sorry try again !");
+
+                }
+
                 return res.json();
 
             })
             .then((data) => {
 
                 console.log(data);
-                if (data) {
+                if (data && data.message != "Email already exist !") {
 
+                    toast.success("Your account has been created successfuly !");
                     navigate("/login");
 
                 } else {
@@ -96,69 +104,101 @@ function Register() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-[70vh]">
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 w-100">
-                    <FormField
-                        control={form.control}
-                        name="username"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Username</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="username" {...field} />
-                                </FormControl>
-                                <FormDescription>This is your username.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                    )}
+        <div className="flex items-center justify-center min-h-[100vh]" >
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(-1)}
+                className="absolute top-4 left-4"
+            >
+                <ArrowLeft className="w-5 h-5" />
+            </Button>
+
+            <ToastContainer />
+
+            <Card className="w-full sm:max-w-md p-5">
+                <CardHeader className="flex flex-col items-center text-center">
+                    <img
+                        src="/logo-jadara.png"
+                        alt="Logo"
+                        className="w-20 h-8 object-contain"
                     />
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="email" {...field} />
-                                </FormControl>
-                                <FormDescription>This is your email.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                    )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input type="password" placeholder="password" {...field} />
-                                </FormControl>
-                                <FormDescription>This is your password.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                    )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="group"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Group</FormLabel>
-                                <FormControl>
-                                    <Input type="number" placeholder="group" {...field} />
-                                </FormControl>
-                                <FormDescription>This is your group.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                    )}
-                    />
-                    <Button type="submit">Sign Up</Button>
-                    <p>If you already have an Account <Link to="/login" className="text-blue-600">Sign In</Link></p>
-                </form>
-            </Form>
+                </CardHeader>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 w-100">
+                        <FormField
+                            control={form.control}
+                            name="username"
+                            render={({ field , fieldState }) => (
+                                <FormItem>
+                                    <FormLabel>Username</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="username" {...field} />
+                                    </FormControl>
+                                    {fieldState.error ? (
+                                        <FormMessage/>
+                                    ) : (
+                                        <FormDescription>This is your username.</FormDescription>
+                                    ) }
+                                </FormItem>
+                        )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field , fieldState }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="email" {...field} />
+                                    </FormControl>
+                                    {fieldState.error ? (
+                                        <FormMessage/>
+                                    ) : (
+                                        <FormDescription>This is your email.</FormDescription>
+                                    ) }
+                                </FormItem>
+                        )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field , fieldState }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input type="password" placeholder="password" {...field} />
+                                    </FormControl>
+                                    {fieldState.error ? (
+                                        <FormMessage/>
+                                    ) : (
+                                        <FormDescription>This is your password.</FormDescription>
+                                    ) }
+                                </FormItem>
+                        )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="group"
+                            render={({ field , fieldState }) => (
+                                <FormItem>
+                                    <FormLabel>Group</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" placeholder="group" {...field} />
+                                    </FormControl>
+                                    {fieldState.error ? (
+                                        <FormMessage/>
+                                    ) : (
+                                        <FormDescription>This is your group.</FormDescription>
+                                    ) }
+                                </FormItem>
+                        )}
+                        />
+                        <Button type="submit" className="w-100">Sign Up</Button>
+                        <p className="flex justify-center gap-1">If you already have an Account <Link to="/login" className="text-blue-600">Sign In</Link></p>
+                    </form>
+                </Form>
+            </Card>
         </div>
     )
 }

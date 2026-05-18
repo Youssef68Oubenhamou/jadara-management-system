@@ -5,15 +5,16 @@ import Course from './components/course';
 import StudentCourses from './pages/student/studentCourses';
 import UserList from "./pages/student/studentdashboard";
 import AdminPage from "./pages/admin/admindashboard";
-import Login from "./pages/login";
-import Register from "./pages/register";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Event from './pages/student/event'
 import Events from './pages/admin/event'
 import Logout from "./pages/logout";
 import { AuthContext } from "./context/AuthContext";
 import { useContext } from "react";
 import AdminCourses from "./pages/admin/adminCourses";
-
+import "./App.css";
+import { Home } from "./pages/Home";
 
 export default function App() {
 
@@ -25,13 +26,24 @@ export default function App() {
 
     }
 
+    const { token } = authContext;
+
     return (
-        <BrowserRouter>
+        <>
+        {!token ? <BrowserRouter>
+            {/* <ThemeProvider defaultTheme="black"> */}
+                    <Routes>
+
+                        <Route path="/" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+
+                    </Routes>
+            {/* </ThemeProvider> */}
+        </BrowserRouter> : <BrowserRouter>
             <ThemeProvider defaultTheme="dark">
                 <Layout>
                     <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
                         <Route path="/logout" element={<Logout />} />
                         <Route path="/stuCourses" element={localStorage.getItem("user-type") == "admin" ? <AdminCourses /> : <StudentCourses />} />
                         <Route path="/student/:courseId" element={<Course title={''} length={0} description={''} content={''} image={''} />} />
@@ -41,5 +53,7 @@ export default function App() {
                 </Layout>
             </ThemeProvider>
         </BrowserRouter>
+        }
+        </>
     )
 }
