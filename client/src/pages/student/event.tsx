@@ -57,60 +57,58 @@ const formatDate = (isoDate: string) => {
 };
 
 export default function Event() {
-  const [events, setEvents] = useState<EventType[]>([]);
+    const [events, setEvents] = useState<EventType[]>([]);
 
-  const authContext = useContext(AuthContext);
+    const authContext = useContext(AuthContext);
 
-  if (!authContext) {
+    if (!authContext) {
 
-    console.log("An error Occured when wrapping the App component with the Provider !");
+        console.log("An error Occured when wrapping the App component with the Provider !");
 
-  }
+    }
 
-  const { token , loading } = authContext;
+    const { token , loading } = authContext;
 
-  useEffect(() => {
-    fetch("http://localhost:5000/event/get")
-      .then((res) => {
-        if (res.ok) {
+    useEffect(() => {
+      fetch("http://localhost:5000/event/get")
+        .then((res) => {
+          if (res.ok) {
 
-          return res.json();
+            return res.json();
 
-        }
-      })
-      .then((data) => {
-        setEvents(data);
-        console.log(data)
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+          }
+        })
+        .then((data) => {
+          setEvents(data);
+          console.log(data)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }, []);
 
-  if (loading) {
-      return null;
-  }
+    if (loading) {
+        return null;
+    }
 
-  if (!token) {
-      return <Navigate to="/login" replace />;
-  }
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
 
-  return (
-    <div className=" mx-auto p-6 bg-blue-100 rounded-xl shadow-md flex flex-col h-100">
-      <h1 className="text-2xl font-bold mb-4 text-center">📅 Upcoming events</h1>
-
-      <EventStudent size="lg">
-        { events && events.map((event, index ) => (
-          <EventCard
-            title={event.title_event}
-            date={formatDate(event.date_event)}
-            description={event.description_event}
-            location={event.location_event}
-            image={event.image}
-            key={index}
-          />
-        ))}
-      </EventStudent>
-    </div>
-  );
+    return (
+        <div className="flex justify-center items-center size-full h-screen">
+            <EventStudent size="lg">
+                { events && events.map((event, index ) => (
+                    <EventCard
+                        title={event.title_event}
+                        date={formatDate(event.date_event)}
+                        description={event.description_event}
+                        location={event.location_event}
+                        image={event.image}
+                        key={index}
+                    />
+                ))}
+            </EventStudent>
+        </div>
+    );
 }

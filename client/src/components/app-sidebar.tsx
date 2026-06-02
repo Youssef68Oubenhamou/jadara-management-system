@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings , LogOut } from "lucide-react"
+import { UserSearchIcon, LucideAlbum, BookOpenCheckIcon, Search, Settings , LogOut } from "lucide-react"
 
 import {
     Sidebar,
@@ -18,17 +18,17 @@ const items = [
   {
     title: "Events",
     url: "/stuEvents",
-    icon: Home,
+    icon: LucideAlbum,
   },
   {
     title: "Courses",
     url: "/stuCourses",
-    icon: Inbox,
+    icon: BookOpenCheckIcon,
   },
   {
     title: "Users",
     url: "/stuClass",
-    icon: Calendar,
+    icon: UserSearchIcon,
   },
   {
     title: "Search",
