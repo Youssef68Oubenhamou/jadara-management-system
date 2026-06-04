@@ -2,6 +2,12 @@ import Course from "@/components/course";
 import { AuthContext } from "@/context/AuthContext";
 import { useState , useEffect, useContext } from "react";
 import { Navigate } from "react-router-dom";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
 
 export interface dataType {
 
@@ -57,19 +63,22 @@ const StudentCourses = () => {
     }
 
     return (
-        token && <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        token && <Carousel className="p-3 justify-self-center h-90 max-w-[35rem] mx-auto mt-[50vh] -translate-y-1/2">
+                    <CarouselContent className="-ml-1 gap-4">
 
-            {
+                        {
 
-                courses && courses.map((course , index) => {
+                            courses && courses.map((course , index) => {
 
-                    return <Course key={index} title={course.title} length={course.course_length} description={course.course_description} content={course.course_content} image={course.course_image} />
+                                return <Course key={index} title={course.title} length={course.course_length} description={course.course_description} content={course.course_content} image={course.course_image} />
 
-                })
+                            })
 
-            }
-
-      </div>
+                        }
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                </Carousel>
     )
 }
 

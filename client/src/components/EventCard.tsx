@@ -16,7 +16,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-
+import { MapPin } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 
 type EventCardProps = {
     title: string;
@@ -29,15 +30,15 @@ type EventCardProps = {
 const EventCard = ({ title, date, description, image, location }: EventCardProps) => {
     return (
         <Card className="relative mx-auto w-full max-w-sm pt-0">
-            <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
+            <div className="absolute rounded-lg inset-0 z-30 aspect-video bg-black/35" />
             <img
                 src={image}
                 alt="Event cover"
-                className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
+                className="relative z-20 rounded-t-lg aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
             />
             <CardHeader>
                 <CardAction>
-                    <Badge variant="secondary">{date}</Badge>
+                    <Badge variant="secondary"><Calendar />{date}</Badge>
                 </CardAction>
                 <CardTitle>{title}</CardTitle>
                 <CardDescription>
@@ -51,7 +52,7 @@ const EventCard = ({ title, date, description, image, location }: EventCardProps
                     <DialogTrigger asChild>
                         <Button className="w-full">View Event</Button>
                     </DialogTrigger>
-                    <DialogContent className="p-0">
+                    <DialogContent className="p-6">
                         <DialogHeader>
                         <DialogTitle><img
                             src={image}
@@ -62,14 +63,14 @@ const EventCard = ({ title, date, description, image, location }: EventCardProps
                             {title}
                         </DialogDescription>
                         </DialogHeader>
-                        <div className="-mx-4 no-scrollbar max-h-[50vh] overflow-y-auto px-6">
+                        <div className="-mx-4 no-scrollbar max-h-[50vh] overflow-y-auto px-4">
                             {Array.from({ length: 1 }).map((_, index) => (
                                 <p key={index} className="mb-4 leading-normal">
                                     {description}
                                 </p>
                             ))}
-                            <Badge variant="secondary">{location}</Badge>
-                            <Badge variant="secondary">{date}</Badge>
+                            <Badge variant="secondary"><MapPin />{location}</Badge>
+                            <Badge variant="secondary"><Calendar />{date}</Badge>
                         </div>
                     </DialogContent>
                 </Dialog>

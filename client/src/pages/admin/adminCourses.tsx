@@ -360,8 +360,8 @@ const AdminCourses = () => {
                         <TableCell className="font-medium">{course._id}</TableCell>
                         <TableCell className="font-medium">{course.title}</TableCell>
                         <TableCell>{course.course_length}</TableCell>
-                        <TableCell>{course.course_description}</TableCell>
-                        <TableCell className="text-right">{course.course_content}</TableCell>
+                        <TableCell className="w-64 whitespace-normal break-words"><div className="line-clamp-3">{course.course_description}</div></TableCell>
+                        <TableCell className="w-64 whitespace-normal break-words"><div className="line-clamp-3">{course.course_content}</div></TableCell>
                         <TableCell className="text-right"><img src={course.course_image} alt="Course Image ..." /></TableCell>
                         <TableCell className="text-right">
                             <Dialog>

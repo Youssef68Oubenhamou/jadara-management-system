@@ -29,7 +29,7 @@ export default function App() {
     const { token } = authContext;
 
     return (
-        <>
+        <div>
         {!token ? <BrowserRouter>
             {/* <ThemeProvider defaultTheme="black"> */}
                     <Routes>
@@ -54,6 +54,6 @@ export default function App() {
             </ThemeProvider>
         </BrowserRouter>
         }
-        </>
+        </div>
     )
 }
