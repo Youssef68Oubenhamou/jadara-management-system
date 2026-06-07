@@ -440,15 +440,16 @@ const AdminCourses = () => {
                                                                         type="file"
                                                                         accept="image/*"
                                                                         onChange={(e) => {
-                                                                        const file = e.target.files?.[0];
-                                                                        if (file) {
-                                                                            const reader = new FileReader();
-                                                                            reader.onloadend = () => {
-                                                                                form.setValue("course_image", reader.result as string);
-                                                                            };
-                                                                            reader.readAsDataURL(file);
-                                                                        }
-                                                                    }}/>
+                                                                            const file = e.target.files?.[0];
+                                                                            if (file) {
+                                                                                const reader = new FileReader();
+                                                                                reader.onloadend = () => {
+                                                                                    form.setValue("course_image", reader.result as string);
+                                                                                };
+                                                                                reader.readAsDataURL(file);
+                                                                            }
+                                                                        }}
+                                                                    />
                                                                 </FormControl>
                                                                 <FormDescription>This is course image.</FormDescription>
                                                                 <FormMessage />
